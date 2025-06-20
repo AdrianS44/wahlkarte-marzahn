@@ -370,6 +370,30 @@ function App() {
     };
   }, [filteredData]);
 
+  // Calculate top topic dynamically based on filtered data  
+  const topTopic = useMemo(() => {
+    const topics = {
+      'Wohnen / Mieten': 0,
+      'Sicherheit': 0,
+      'Bildung / Schule': 0,
+      'Verkehr': 0,
+      'Umwelt': 0,
+      'Nachbarschaftliches Miteinander': 0
+    };
+    
+    filteredData.forEach(row => {
+      Object.keys(topics).forEach(topic => {
+        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
+        if (row[columnName] === 'Ja') {
+          topics[topic]++;
+        }
+      });
+    });
+    
+    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
+    return topTopicName || 'Keine Daten';
+  }, [filteredData]);
+
   // Calculate top topic dynamically based on filtered data
   const topTopic = useMemo(() => {
     const topics = {
