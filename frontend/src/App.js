@@ -321,8 +321,12 @@ function App() {
       datasets: [{
         label: 'Wichtigkeit der Themen',
         data: Object.values(topics),
-        backgroundColor: '#3b82f6',
-        borderColor: '#2563eb',
+        backgroundColor: [
+          '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'
+        ],
+        borderColor: [
+          '#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#db2777'
+        ],
         borderWidth: 1
       }]
     };
@@ -343,8 +347,63 @@ function App() {
       datasets: [{
         label: 'Altersverteilung',
         data: Object.values(ageCounts),
-        backgroundColor: '#10b981',
-        borderColor: '#059669',
+        backgroundColor: [
+          '#06b6d4', '#8b5cf6', '#f59e0b', '#ef4444'
+        ],
+        borderColor: [
+          '#0891b2', '#7c3aed', '#d97706', '#dc2626'
+        ],
+        borderWidth: 1
+      }]
+    };
+  }, [filteredData]);
+
+  // Calculate top topic dynamically based on filtered data
+  const topTopic = useMemo(() => {
+    const topics = {
+      'Wohnen / Mieten': 0,
+      'Sicherheit': 0,
+      'Bildung / Schule': 0,
+      'Verkehr': 0,
+      'Umwelt': 0,
+      'Nachbarschaftliches Miteinander': 0
+    };
+    
+    filteredData.forEach(row => {
+      Object.keys(topics).forEach(topic => {
+        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
+        if (row[columnName] === 'Ja') {
+          topics[topic]++;
+        }
+      });
+    });
+    
+    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
+    return topTopicName;
+  }, [filteredData]);
+
+  // Generate future outlook data with scale values instead of percentages
+  const futureOutlookData = useMemo(() => {
+    const outlookCounts = {};
+    
+    filteredData.forEach(row => {
+      const outlook = row['Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?'];
+      if (outlook && outlook !== 'N/A' && outlook !== '') {
+        outlookCounts[outlook] = (outlookCounts[outlook] || 0) + 1;
+      }
+    });
+    
+    return {
+      labels: Object.keys(outlookCounts),
+      datasets: [{
+        label: 'Zukunftsoptimismus',
+        data: Object.values(outlookCounts),
+        backgroundColor: [
+          '#ef4444', '#f97316', '#22c55e', '#06b6d4'
+        ],
+        borderColor: [
+          '#dc2626', '#ea580c', '#16a34a', '#0891b2'
+        ],
         borderWidth: 1
       }]
     };
