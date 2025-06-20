@@ -29,14 +29,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// U-Bahn station coordinates for Marzahn-Hellersdorf (corrected coordinates from Plus Codes)
+// U-Bahn station coordinates for Marzahn-Hellersdorf (final corrected coordinates)
 const stationCoordinates = {
-  'Um den U-Bhf. Kaulsdorf-Nord herum': [52.5214, 13.5383], // GHCQ+H9 Berlin
-  'Um den U-Bhf. Hellersdorf herum': [52.5361, 13.6054], // GJP4+G4 Berlin  
-  'Um den U-/S-Bhf. Wuhletal herum': [52.5131, 13.5254], // GH7G+33 Berlin
-  'Um den U-Bhf. Kienberg herum': [52.5289, 13.5408], // GHHR+C6 Berlin
-  'Um den U-Bhf. Cottbusser Platz herum': [52.5341, 13.5469], // GHMW+GH Berlin
-  'Siedlungsgebiet': [52.5240, 13.6129] // 52°31'26.5"N 13°36'46.5"E
+  'Um den U-Bhf. Kaulsdorf-Nord herum': [52.52104944488676, 13.588935913056046], // Korrekte Koordinaten
+  'Um den U-Bhf. Hellersdorf herum': [52.5361, 13.6054], // GJP4+G4 Berlin (bereits korrekt)
+  'Um den U-/S-Bhf. Wuhletal herum': [52.5124167, 13.5752778], // 52°30'44.7"N 13°34'30.9"E
+  'Um den U-Bhf. Kienberg herum': [52.52842141169159, 13.590578732296787], // Korrekte Koordinaten
+  'Um den U-Bhf. Cottbusser Platz herum': [52.53375897527301, 13.596232651740307], // Korrekte Koordinaten
+  'Siedlungsgebiet': [52.5240, 13.6129] // 52°31'26.5"N 13°36'46.5"E (bereits korrekt)
 };
 
 // Complete survey data (all 151 responses)
