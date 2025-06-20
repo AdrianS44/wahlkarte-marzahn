@@ -345,47 +345,32 @@ function App() {
       }
     });
     
+    // Consistent color mapping for age groups
+    const ageColorMap = {
+      '18-29': '#06b6d4',    // Cyan
+      '30-49': '#8b5cf6',    // Purple  
+      '50-69': '#f59e0b',    // Orange
+      '70+': '#ef4444'       // Red
+    };
+    
+    const sortedAges = Object.keys(ageCounts).sort();
+    
     return {
-      labels: Object.keys(ageCounts),
+      labels: sortedAges,
       datasets: [{
         label: 'Altersverteilung',
-        data: Object.values(ageCounts),
-        backgroundColor: [
-          '#06b6d4', '#8b5cf6', '#f59e0b', '#ef4444'
-        ],
-        borderColor: [
-          '#0891b2', '#7c3aed', '#d97706', '#dc2626'
-        ],
+        data: sortedAges.map(age => ageCounts[age]),
+        backgroundColor: sortedAges.map(age => ageColorMap[age] || '#6b7280'),
+        borderColor: sortedAges.map(age => {
+          const color = ageColorMap[age] || '#6b7280';
+          return color.replace('0b', '0a'); // Slightly darker border
+        }),
         borderWidth: 1
       }]
     };
   }, [filteredData]);
 
-  // Calculate top topic dynamically based on filtered data
-  const topTopic = useMemo(() => {
-    const topics = {
-      'Wohnen / Mieten': 0,
-      'Sicherheit': 0,
-      'Bildung / Schule': 0,
-      'Verkehr': 0,
-      'Umwelt': 0,
-      'Nachbarschaftliches Miteinander': 0
-    };
-    
-    filteredData.forEach(row => {
-      Object.keys(topics).forEach(topic => {
-        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
-        if (row[columnName] === 'Ja') {
-          topics[topic]++;
-        }
-      });
-    });
-    
-    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
-    return topTopicName;
-  }, [filteredData]);
-
-  // Generate future outlook data with scale values instead of percentages
+  // Generate future outlook data with consistent colors for scale values
   const futureOutlookData = useMemo(() => {
     const outlookCounts = {};
     
@@ -396,17 +381,29 @@ function App() {
       }
     });
     
+    // Consistent color mapping for outlook
+    const outlookColorMap = {
+      'sehr pessimistisch': '#ef4444',     // Red
+      'eher pessimistisch': '#f97316',     // Orange  
+      'eher optimistisch': '#22c55e',      // Green
+      'sehr optimistisch': '#06b6d4'       // Cyan
+    };
+    
+    const sortedOutlook = Object.keys(outlookCounts).sort((a, b) => {
+      const order = ['sehr pessimistisch', 'eher pessimistisch', 'eher optimistisch', 'sehr optimistisch'];
+      return order.indexOf(a) - order.indexOf(b);
+    });
+    
     return {
-      labels: Object.keys(outlookCounts),
+      labels: sortedOutlook,
       datasets: [{
         label: 'Zukunftsoptimismus',
-        data: Object.values(outlookCounts),
-        backgroundColor: [
-          '#ef4444', '#f97316', '#22c55e', '#06b6d4'
-        ],
-        borderColor: [
-          '#dc2626', '#ea580c', '#16a34a', '#0891b2'
-        ],
+        data: sortedOutlook.map(outlook => outlookCounts[outlook]),
+        backgroundColor: sortedOutlook.map(outlook => outlookColorMap[outlook] || '#6b7280'),
+        borderColor: sortedOutlook.map(outlook => {
+          const color = outlookColorMap[outlook] || '#6b7280';
+          return color.replace(/[0-9]/, (match) => String(Math.max(1, parseInt(match) - 1))); // Darker border
+        }),
         borderWidth: 1
       }]
     };
