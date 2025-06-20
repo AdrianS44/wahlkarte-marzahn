@@ -200,16 +200,19 @@ function App() {
       skipEmptyLines: true
     });
     
-    // Include all rows with valid location data (don't filter out too much)
-    const cleanedData = result.data.filter(row => 
-      row['Q00. In welchem Kiez wohnen Sie?'] && 
-      row['Q00. In welchem Kiez wohnen Sie?'] !== 'N/A' &&
-      row['Q00. In welchem Kiez wohnen Sie?'] !== '' &&
-      row['Q001. Wie alt sind Sie?'] &&
-      row['Q001. Wie alt sind Sie?'] !== ''
-    );
+    // Include more rows - only filter out completely empty or N/A responses
+    const cleanedData = result.data.filter(row => {
+      const location = row['Q00. In welchem Kiez wohnen Sie?'];
+      const age = row['Q001. Wie alt sind Sie?'];
+      
+      // Keep rows where either location OR age has valid data (not both required)
+      return (location && location !== 'N/A' && location !== '') || 
+             (age && age !== 'N/A' && age !== '');
+    });
     
-    console.log(`Parsed ${cleanedData.length} valid survey responses`);
+    console.log(`Total rows in CSV: ${result.data.length}`);
+    console.log(`Valid survey responses: ${cleanedData.length}`);
+    console.log('Sample data:', cleanedData.slice(0, 3));
     setParsedData(cleanedData);
   }, []);
 
