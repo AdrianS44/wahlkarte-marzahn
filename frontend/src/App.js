@@ -694,25 +694,15 @@ function App() {
               </div>
               
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold mb-4">Zukunftsoptimismus nach Gebiet</h3>
-                <Bar data={{
-                  labels: Object.keys(locationStats),
-                  datasets: [{
-                    label: 'Optimismus (%)',
-                    data: Object.values(locationStats).map(stats => stats.optimisticPercent),
-                    backgroundColor: '#10b981',
-                    borderColor: '#059669',
-                    borderWidth: 1
-                  }]
-                }} options={{
+                <h3 className="text-lg font-semibold mb-4">Zukunftsoptimismus (Skalenwerte)</h3>
+                <Bar data={futureOutlookData} options={{
                   responsive: true,
                   plugins: {
                     legend: { display: false }
                   },
                   scales: {
                     y: {
-                      beginAtZero: true,
-                      max: 100
+                      beginAtZero: true
                     }
                   }
                 }} />
