@@ -183,14 +183,14 @@ const surveyData = `id. Antwort ID;Q00. In welchem Kiez wohnen Sie?;Q001. Wie al
 150;Um den U-Bhf. Cottbusser Platz herum;50-69;1;Ja;Nein;Nein;Ja;Ja;Nein;Nein;;Ja;Ja;Nein;Ja;Ja;Nein;;2;Ja;Ja;Nein;Nein;Ja;Nein;eher pessimistisch;ausreichend;3;2;Ja;Weiß nicht;Mehr Sicherheit und Sauberkeit
 151;Um den U-Bhf. Cottbusser Platz herum;18-29;2;Nein;Nein;Nein;Nein;Nein;Nein;Ja;;Nein;Nein;Nein;Ja;Nein;Nein;;4;Ja;Ja;Nein;Nein;Nein;Nein;eher pessimistisch;ausreichend;2;5;Nein;Ja;"Ich wünsche mir eine stärkere und effektivere Bekämpfung rechter Strukturen im Kiez. Es passiert z.B. sehr häufig, dass man Aufkleber mit Inhalten wie ""I <3 NS"" an der Fassade von U-Cottbusser Platz (Eingang vom Helwichstorp Park) sieht, was mich und sicherlich auch andere Mitbewohner verunsichert."`;
 
-// U-Bahn station coordinates for Marzahn-Hellersdorf
+// U-Bahn station coordinates for Marzahn-Hellersdorf (corrected coordinates)
 const stationCoordinates = {
-  'Um den U-Bhf. Kaulsdorf-Nord herum': [52.5156, 13.6342],
-  'Um den U-/S-Bhf. Wuhletal herum': [52.5133, 13.6175],
-  'Um den U-Bhf. Kienberg herum': [52.5133, 13.5875],
-  'Um den U-Bhf. Hellersdorf herum': [52.5233, 13.5967],
-  'Um den U-Bhf. Cottbusser Platz herum': [52.5267, 13.5683],
-  'Siedlungsgebiet': [52.5200, 13.6100]
+  'Um den U-Bhf. Kaulsdorf-Nord herum': [52.5172, 13.5685],
+  'Um den U-/S-Bhf. Wuhletal herum': [52.5194, 13.5711],
+  'Um den U-Bhf. Kienberg herum': [52.5218, 13.5777],
+  'Um den U-Bhf. Hellersdorf herum': [52.5261, 13.5844],
+  'Um den U-Bhf. Cottbusser Platz herum': [52.5351, 13.5901],
+  'Siedlungsgebiet': [52.5200, 13.5600]
 };
 
 function App() {
