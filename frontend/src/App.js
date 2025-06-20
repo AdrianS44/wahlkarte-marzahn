@@ -606,7 +606,7 @@ function App() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Top Thema</p>
-                    <p className="text-2xl font-semibold text-gray-900">Sicherheit</p>
+                    <p className="text-2xl font-semibold text-gray-900">{topTopic.split(' / ')[0]}</p>
                   </div>
                 </div>
               </div>
