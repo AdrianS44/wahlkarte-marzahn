@@ -489,7 +489,7 @@ function App() {
             </div>
             <div className="mt-4 text-sm text-gray-600">
               <p><strong>Legende:</strong> Die Kreise zeigen die durchschnittliche Zufriedenheit pro Gebiet. Größere Kreise = höhere Zufriedenheit.</p>
-              <p>Grün = hohe Zufriedenheit (>3.5), Orange = mittlere Zufriedenheit (2.5-3.5), Rot = niedrige Zufriedenheit (<2.5)</p>
+              <p>Grün = hohe Zufriedenheit (&gt;3.5), Orange = mittlere Zufriedenheit (2.5-3.5), Rot = niedrige Zufriedenheit (&lt;2.5)</p>
             </div>
           </div>
         )}
