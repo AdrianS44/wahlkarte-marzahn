@@ -39,7 +39,7 @@ const stationCoordinates = {
   'Siedlungsgebiet': [52.5240, 13.6129] // 52°31'26.5"N 13°36'46.5"E (bereits korrekt)
 };
 
-// Complete survey data (all 151 responses)
+// Complete survey data (all responses starting from ID 11)
 const surveyData = `id. Antwort ID;Q00. In welchem Kiez wohnen Sie?;Q001. Wie alt sind Sie?;Q002. Wie viele Personen leben (inkl. Ihnen) in Ihrem Haushalt?;Q012[SQ001]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Soziale Medien];Q012[SQ003]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Zeitung/Print-Medien];Q012[SQ004]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Fernsehen/TV];Q012[SQ005]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Bezirkszeitung];Q012[SQ006]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Newsletter];Q012[SQ007]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Informationsveranstaltung];Q012[SQ008]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Gar nicht];Q012[other]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Sonstiges];Q013[SQ001]. Welche sozialen Medien nutzen Sie? [Facebook];Q013[SQ002]. Welche sozialen Medien nutzen Sie? [Instagram];Q013[SQ003]. Welche sozialen Medien nutzen Sie? [TikTok];Q013[SQ004]. Welche sozialen Medien nutzen Sie? [YouTube];Q013[SQ005]. Welche sozialen Medien nutzen Sie? [WhatsApp];Q013[SQ006]. Welche sozialen Medien nutzen Sie? [keine];Q013[other]. Welche sozialen Medien nutzen Sie? [Sonstiges];Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?;Q004[SQ001]. Welche Themen beschäftigen Sie aktuell am meisten? [Wohnen / Mieten];Q004[SQ002]. Welche Themen beschäftigen Sie aktuell am meisten? [Sicherheit];Q004[SQ003]. Welche Themen beschäftigen Sie aktuell am meisten? [Bildung / Schule];Q004[SQ004]. Welche Themen beschäftigen Sie aktuell am meisten? [Verkehr];Q004[SQ005]. Welche Themen beschäftigen Sie aktuell am meisten? [Umwelt];Q004[SQ006]. Welche Themen beschäftigen Sie aktuell am meisten? [Nachbarschaftliches Miteinander];Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?;Q006. Wie gut fühlen Sie sich über lokale Themen informiert?;Q007. Wie stark fühlen Sie sich im Bezirk politisch vertreten?;Q008. Wie sehr glauben Sie, dass politische Entscheidungen Ihre Lebensrealität verbessern können?;"Q011. Haben Sie schon einmal etwas von den ""Kiezmachern"" gehört?";Q009. Würden Sie sich gerne stärker bei lokalen Themen einbringen?;Q010. Was wünschen Sie sich für die Zukunft in Ihrem Kiez?
 11;Um den U-Bhf. Kaulsdorf-Nord herum;30-49;2;Ja;Nein;Nein;Nein;Nein;Nein;Nein;;Ja;Nein;Nein;Nein;Nein;Nein;;3;Nein;Ja;Nein;Ja;Nein;Nein;eher optimistisch;unzureichend;;;N/A;;
 12;Siedlungsgebiet;30-49;2;Ja;Nein;Ja;Ja;Ja;Nein;Nein;;Ja;Nein;Nein;Nein;Nein;Nein;;4;Ja;Ja;Nein;Ja;Nein;Nein;eher optimistisch;unzureichend;3;;Ja;Weiß nicht;Mehr Verkehrssicherheit auf der Wernerstraße. Diese parkenden LKW's die den Kindern die Sicherheit zum Überqueren der Straße behindern.
@@ -200,19 +200,18 @@ function App() {
       skipEmptyLines: true
     });
     
-    // Include more rows - only filter out completely empty or N/A responses
+    // More lenient filtering - include more data rows
     const cleanedData = result.data.filter(row => {
       const location = row['Q00. In welchem Kiez wohnen Sie?'];
       const age = row['Q001. Wie alt sind Sie?'];
       
-      // Keep rows where either location OR age has valid data (not both required)
+      // Keep rows where location OR age has valid data (not strictly both required)
       return (location && location !== 'N/A' && location !== '') || 
              (age && age !== 'N/A' && age !== '');
     });
     
     console.log(`Total rows in CSV: ${result.data.length}`);
-    console.log(`Valid survey responses: ${cleanedData.length}`);
-    console.log('Sample data:', cleanedData.slice(0, 3));
+    console.log(`Valid survey responses included: ${cleanedData.length}`);
     setParsedData(cleanedData);
   }, []);
 
@@ -273,7 +272,7 @@ function App() {
     return stats;
   }, [filteredData]);
 
-  // Generate chart data
+  // Generate chart data with consistent colors
   const satisfactionChartData = useMemo(() => {
     const satisfactionCounts = {};
     
@@ -335,6 +334,30 @@ function App() {
     };
   }, [filteredData]);
 
+  // Calculate top topic dynamically based on filtered data
+  const topTopic = useMemo(() => {
+    const topics = {
+      'Wohnen / Mieten': 0,
+      'Sicherheit': 0,
+      'Bildung / Schule': 0,
+      'Verkehr': 0,
+      'Umwelt': 0,
+      'Nachbarschaftliches Miteinander': 0
+    };
+    
+    filteredData.forEach(row => {
+      Object.keys(topics).forEach(topic => {
+        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
+        if (row[columnName] === 'Ja') {
+          topics[topic]++;
+        }
+      });
+    });
+    
+    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
+    return topTopicName || 'Keine Daten';
+  }, [filteredData]);
+
   const ageDistributionData = useMemo(() => {
     const ageCounts = {};
     
@@ -363,107 +386,11 @@ function App() {
         backgroundColor: sortedAges.map(age => ageColorMap[age] || '#6b7280'),
         borderColor: sortedAges.map(age => {
           const color = ageColorMap[age] || '#6b7280';
-          return color.replace('0b', '0a'); // Slightly darker border
+          return color.replace(/4$/, '6'); // Slightly darker border
         }),
         borderWidth: 1
       }]
     };
-  }, [filteredData]);
-
-  // Calculate top topic dynamically based on filtered data  
-  const topTopic = useMemo(() => {
-    const topics = {
-      'Wohnen / Mieten': 0,
-      'Sicherheit': 0,
-      'Bildung / Schule': 0,
-      'Verkehr': 0,
-      'Umwelt': 0,
-      'Nachbarschaftliches Miteinander': 0
-    };
-    
-    filteredData.forEach(row => {
-      Object.keys(topics).forEach(topic => {
-        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
-        if (row[columnName] === 'Ja') {
-          topics[topic]++;
-        }
-      });
-    });
-    
-    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
-    return topTopicName || 'Keine Daten';
-  }, [filteredData]);
-
-  // Calculate top topic dynamically based on filtered data  
-  const topTopic = useMemo(() => {
-    const topics = {
-      'Wohnen / Mieten': 0,
-      'Sicherheit': 0,
-      'Bildung / Schule': 0,
-      'Verkehr': 0,
-      'Umwelt': 0,
-      'Nachbarschaftliches Miteinander': 0
-    };
-    
-    filteredData.forEach(row => {
-      Object.keys(topics).forEach(topic => {
-        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
-        if (row[columnName] === 'Ja') {
-          topics[topic]++;
-        }
-      });
-    });
-    
-    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
-    return topTopicName || 'Keine Daten';
-  }, [filteredData]);
-
-  // Calculate top topic dynamically based on filtered data  
-  const topTopic = useMemo(() => {
-    const topics = {
-      'Wohnen / Mieten': 0,
-      'Sicherheit': 0,
-      'Bildung / Schule': 0,
-      'Verkehr': 0,
-      'Umwelt': 0,
-      'Nachbarschaftliches Miteinander': 0
-    };
-    
-    filteredData.forEach(row => {
-      Object.keys(topics).forEach(topic => {
-        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
-        if (row[columnName] === 'Ja') {
-          topics[topic]++;
-        }
-      });
-    });
-    
-    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
-    return topTopicName || 'Keine Daten';
-  }, [filteredData]);
-
-  // Calculate top topic dynamically based on filtered data
-  const topTopic = useMemo(() => {
-    const topics = {
-      'Wohnen / Mieten': 0,
-      'Sicherheit': 0,
-      'Bildung / Schule': 0,
-      'Verkehr': 0,
-      'Umwelt': 0,
-      'Nachbarschaftliches Miteinander': 0
-    };
-    
-    filteredData.forEach(row => {
-      Object.keys(topics).forEach(topic => {
-        const columnName = `Q004[SQ00${Object.keys(topics).indexOf(topic) + 1}]. Welche Themen beschäftigen Sie aktuell am meisten? [${topic}]`;
-        if (row[columnName] === 'Ja') {
-          topics[topic]++;
-        }
-      });
-    });
-    
-    const topTopicName = Object.keys(topics).reduce((a, b) => topics[a] > topics[b] ? a : b);
-    return topTopicName;
   }, [filteredData]);
 
   // Generate future outlook data with consistent colors for scale values
@@ -498,7 +425,7 @@ function App() {
         backgroundColor: sortedOutlook.map(outlook => outlookColorMap[outlook] || '#6b7280'),
         borderColor: sortedOutlook.map(outlook => {
           const color = outlookColorMap[outlook] || '#6b7280';
-          return color.replace(/[0-9]/, (match) => String(Math.max(1, parseInt(match) - 1))); // Darker border
+          return color.replace(/4$/, '6'); // Darker border
         }),
         borderWidth: 1
       }]
@@ -738,7 +665,7 @@ function App() {
             <h3 className="text-lg font-semibold mb-4">Interaktive Karte - Marzahn-Hellersdorf</h3>
             <div style={{ height: '600px' }}>
               <MapContainer
-                center={[52.5200, 13.6000]}
+                center={[52.5200, 13.5900]}
                 zoom={12}
                 style={{ height: '100%', width: '100%' }}
               >
