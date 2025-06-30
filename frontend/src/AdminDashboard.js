@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit3, Trash2, Download, Upload, LogOut, Save, X, Users, UserPlus } from 'lucide-react';
 
-const AdminDashboard = ({ token, onLogout }) => {
+const AdminDashboard = ({ token, onLogout, userRole }) => {
   const [surveyResponses, setSurveyResponses] = useState([]);
+  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showUserForm, setShowUserForm] = useState(false);
   const [editingResponse, setEditingResponse] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [activeTab, setActiveTab] = useState('surveys');
   const [formData, setFormData] = useState({
     location: '',
     age_group: '',
