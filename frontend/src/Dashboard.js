@@ -201,7 +201,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminToken, setAdminToken] = useState(null);
-  const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState(wahlkreisGrenzen);
+  const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState([]);
   const [showBoundaryEditor, setShowBoundaryEditor] = useState(false);
   const [showWahlkreisGrenzen, setShowWahlkreisGrenzen] = useState(true);
 
