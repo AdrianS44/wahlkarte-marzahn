@@ -597,9 +597,13 @@ function App() {
               
               <button
                 onClick={() => {
-                  const adminWindow = window.open('/admin', '_blank');
-                  if (!adminWindow) {
-                    // Fallback: Show admin login in current window
+                  // Create admin login popup
+                  if (!adminToken) {
+                    const shouldLogin = window.confirm('Möchten Sie sich als Administrator anmelden?');
+                    if (shouldLogin) {
+                      setIsAdminMode(true);
+                    }
+                  } else {
                     setIsAdminMode(true);
                   }
                 }}
