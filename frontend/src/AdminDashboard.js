@@ -99,6 +99,19 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation: Check if required fields are filled
+    if (!formData.location || !formData.age_group || !formData.household_size || !formData.satisfaction || !formData.future_outlook) {
+      alert('Bitte füllen Sie alle Pflichtfelder aus: Wohngebiet, Alter, Haushaltsgröße, Zufriedenheit und Zukunftsausblick.');
+      return;
+    }
+
+    // Additional validation for custom address
+    if (formData.location === 'Andere Adresse' && !formData.custom_address) {
+      alert('Bitte geben Sie eine spezifische Adresse ein.');
+      return;
+    }
+    
     const url = editingResponse 
       ? `${process.env.REACT_APP_BACKEND_URL}/api/survey-responses/${editingResponse._id}`
       : `${process.env.REACT_APP_BACKEND_URL}/api/survey-responses`;
@@ -115,14 +128,24 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
         body: JSON.stringify(formData),
       });
 
+      if (response.status === 401) {
+        alert('Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.');
+        onLogout();
+        return;
+      }
+
       if (response.ok) {
         fetchSurveyResponses();
         resetForm();
         alert(editingResponse ? 'Antwort aktualisiert!' : 'Neue Antwort hinzugefügt!');
+      } else {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        alert(`Fehler beim Speichern: ${errorData.detail || 'Unbekannter Fehler'}`);
       }
     } catch (error) {
       console.error('Error saving response:', error);
-      alert('Fehler beim Speichern!');
+      alert('Fehler beim Speichern! Prüfen Sie Ihre Internetverbindung.');
     }
   };
 
