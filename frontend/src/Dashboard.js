@@ -1004,6 +1004,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 )}
                 
                 {/* Marker für alle Gebiete */}
+                {/* Marker für alle Gebiete */}
                 {Object.entries(locationStats).map(([location, stats]) => (
                   <Marker 
                     key={location}
@@ -1027,6 +1028,34 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                     </Popup>
                   </Marker>
                 ))}
+
+                {/* Zusätzliche Marker für custom addresses */}
+                {filteredData
+                  .filter(response => response.custom_address && response.custom_address.trim())
+                  .map((response, index) => (
+                    <Marker 
+                      key={`custom-${index}`}
+                      position={[52.515, 13.585]} // Fallback-Position in Marzahn-Hellersdorf
+                      icon={new L.Icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                      })}
+                    >
+                      <Popup>
+                        <div className="p-2">
+                          <h4 className="font-semibold text-sm mb-2">Individueller Standort</h4>
+                          <p className="text-xs font-medium">📍 {response.custom_address}</p>
+                          <p className="text-xs">Zufriedenheit: {response['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'] || 'N/A'}/5</p>
+                          <p className="text-xs">Alter: {response['Q001. Wie alt sind Sie?'] || 'N/A'}</p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )
+                )}
 
                 {/* Zusätzliche Marker für custom addresses */}
                 {filteredData
