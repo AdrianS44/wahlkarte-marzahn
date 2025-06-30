@@ -321,7 +321,7 @@ async def export_csv_data(current_user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=400, detail=f"Error exporting CSV: {str(e)}")
 
 @app.get("/api/stats")
-async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
+async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     """Get dashboard statistics"""
     try:
         total_responses = await collection.count_documents({})
