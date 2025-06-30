@@ -213,27 +213,6 @@ function App() {
     }
   }, []);
 
-  const handleAdminLogin = (token) => {
-    setAdminToken(token);
-    setIsAdminMode(true);
-  };
-
-  const handleAdminLogout = () => {
-    localStorage.removeItem('adminToken');
-    setAdminToken(null);
-    setIsAdminMode(false);
-  };
-
-  // Show admin interface if logged in
-  if (isAdminMode && adminToken) {
-    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
-  }
-
-  // Show admin login if admin mode requested but not logged in
-  if (isAdminMode && !adminToken) {
-    return <AdminLogin onLogin={handleAdminLogin} />;
-  }
-
   // Parse CSV data on component mount
   useEffect(() => {
     const result = Papa.parse(surveyData, {
@@ -527,6 +506,29 @@ function App() {
     const values = [...new Set(parsedData.map(row => row[columnName]).filter(Boolean))];
     return values.filter(value => value !== 'N/A');
   };
+
+  const handleAdminLogin = (token) => {
+    setAdminToken(token);
+    setIsAdminMode(true);
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('adminToken');
+    setAdminToken(null);
+    setIsAdminMode(false);
+  };
+
+  // ALLE HOOKS SIND JETZT AUFGERUFEN - Jetzt können wir bedingte Returns verwenden
+
+  // Show admin interface if logged in
+  if (isAdminMode && adminToken) {
+    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
+  }
+
+  // Show admin login if admin mode requested but not logged in
+  if (isAdminMode && !adminToken) {
+    return <AdminLogin onLogin={handleAdminLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
