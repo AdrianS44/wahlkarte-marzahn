@@ -566,6 +566,19 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 <span>Grenzen</span>
               </button>
               
+              <button
+                onClick={() => setShowWahlkreisGrenzen(!showWahlkreisGrenzen)}
+                className={`flex items-center space-x-2 py-2 px-3 text-sm rounded-md ${
+                  showWahlkreisGrenzen 
+                    ? 'bg-red-100 hover:bg-red-200 text-red-700' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+                title="Wahlkreis-Grenzen anzeigen/ausblenden"
+              >
+                <MapPin className="w-4 h-4" />
+                <span>{showWahlkreisGrenzen ? 'Wahlkreis ausblenden' : 'Wahlkreis anzeigen'}</span>
+              </button>
+              
               {userRole === 'admin' && (
                 <button
                   onClick={onAdminMode}
