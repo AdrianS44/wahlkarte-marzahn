@@ -139,6 +139,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     return {"username": username, "role": payload.get("role", "user")}
 
+# Initialize default users on startup
+@app.on_event("startup")
+async def startup_event():
+    await initialize_default_users()
+
+# User management endpoints (admin only)
+async def require_admin(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user
+
 @app.get("/")
 def read_root():
     return {"message": "Survey Dashboard API"}
