@@ -566,23 +566,24 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 <span>Grenzen</span>
               </button>
               
+              {userRole === 'admin' && (
+                <button
+                  onClick={onAdminMode}
+                  className="flex items-center space-x-2 py-2 px-3 text-sm bg-blue-100 hover:bg-blue-200 rounded-md"
+                  title="Admin-Bereich öffnen"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Admin</span>
+                </button>
+              )}
+              
               <button
-                onClick={() => {
-                  // Create admin login popup
-                  if (!adminToken) {
-                    const shouldLogin = window.confirm('Möchten Sie sich als Administrator anmelden?');
-                    if (shouldLogin) {
-                      setIsAdminMode(true);
-                    }
-                  } else {
-                    setIsAdminMode(true);
-                  }
-                }}
-                className="flex items-center space-x-2 py-2 px-3 text-sm bg-blue-100 hover:bg-blue-200 rounded-md"
-                title="Admin-Bereich öffnen"
+                onClick={onLogout}
+                className="flex items-center space-x-2 py-2 px-3 text-sm bg-red-100 hover:bg-red-200 rounded-md"
+                title="Abmelden"
               >
-                <Settings className="w-4 h-4" />
-                <span>Admin</span>
+                <LogOut className="w-4 h-4" />
+                <span>Abmelden</span>
               </button>
             </div>
           </nav>
