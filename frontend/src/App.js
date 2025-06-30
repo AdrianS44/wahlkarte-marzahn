@@ -558,7 +558,8 @@ function App() {
             <h2 className="text-lg font-semibold">Filter</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* First Row of Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Wohngebiet</label>
               <select
@@ -602,7 +603,103 @@ function App() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Soziale Medien</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Haushaltsgröße</label>
+              <select
+                value={filters.householdSize}
+                onChange={(e) => setFilters({...filters, householdSize: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Haushaltsgrößen</option>
+                {getUniqueValues('Q002. Wie viele Personen leben (inkl. Ihnen) in Ihrem Haushalt?').map(size => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Second Row of Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Soziale Medien Plattform</label>
+              <select
+                value={filters.socialMediaPlatform}
+                onChange={(e) => setFilters({...filters, socialMediaPlatform: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Plattformen</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="YouTube">YouTube</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="keine">Keine sozialen Medien</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Informationsquelle</label>
+              <select
+                value={filters.informationSource}
+                onChange={(e) => setFilters({...filters, informationSource: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Informationsquellen</option>
+                <option value="Soziale Medien">Soziale Medien</option>
+                <option value="Print-Medien">Zeitung/Print-Medien</option>
+                <option value="Fernsehen/TV">Fernsehen/TV</option>
+                <option value="Newsletter">Newsletter</option>
+                <option value="Informationsveranstaltung">Informationsveranstaltung</option>
+                <option value="Gar nicht">Gar nicht</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Zukunftsoptimismus</label>
+              <select
+                value={filters.futureOutlook}
+                onChange={(e) => setFilters({...filters, futureOutlook: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Zukunftsaussichten</option>
+                {getUniqueValues('Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?').map(outlook => (
+                  <option key={outlook} value={outlook}>{outlook}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Politische Vertretung</label>
+              <select
+                value={filters.politicalRepresentation}
+                onChange={(e) => setFilters({...filters, politicalRepresentation: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Bewertungen</option>
+                {getUniqueValues('Q007. Wie stark fühlen Sie sich im Bezirk politisch vertreten?').map(rep => (
+                  <option key={rep} value={rep}>{rep}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Third Row of Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Kiezmacher bekannt</label>
+              <select
+                value={filters.kiezmacherKnown}
+                onChange={(e) => setFilters({...filters, kiezmacherKnown: e.target.value})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Alle Antworten</option>
+                <option value="Ja">Ja, bekannt</option>
+                <option value="Nein">Nein, unbekannt</option>
+                <option value="N/A">Keine Angabe</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Soziale Medien nutzen</label>
               <select
                 value={filters.mediaSource}
                 onChange={(e) => setFilters({...filters, mediaSource: e.target.value})}
@@ -613,18 +710,30 @@ function App() {
                 <option value="Nein">Nutzt keine sozialen Medien</option>
               </select>
             </div>
+            
+            <div className="col-span-2">
+              <div className="flex items-end h-full">
+                <button
+                  onClick={() => setFilters({
+                    location: '', ageGroup: '', mediaSource: '', satisfaction: '',
+                    socialMediaPlatform: '', informationSource: '', householdSize: '',
+                    futureOutlook: '', politicalRepresentation: '', kiezmacherKnown: ''
+                  })}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Alle Filter zurücksetzen
+                </button>
+              </div>
+            </div>
           </div>
           
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               Gefilterte Ergebnisse: <span className="font-semibold">{filteredData.length}</span> von {parsedData.length} Antworten
             </p>
-            <button
-              onClick={() => setFilters({location: '', ageGroup: '', mediaSource: '', satisfaction: ''})}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Filter zurücksetzen
-            </button>
+            <div className="text-sm text-gray-500">
+              Aktive Filter: {Object.values(filters).filter(v => v !== '').length}
+            </div>
           </div>
         </div>
 
