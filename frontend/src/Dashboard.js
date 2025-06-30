@@ -893,7 +893,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 {/* Wahlkreis-Grenzen anzeigen (GeoJSON) */}
                 {showWahlkreisGrenzen && (
                   <GeoJSON
-                    data={wahlkreisGrenzen}
+                    data={wahlkreisGeoJson}
                     style={{
                       color: '#ef4444',
                       weight: 3,
