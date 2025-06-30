@@ -890,11 +890,32 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
                 
-                {/* Wahlkreis-Grenzen anzeigen (falls vorhanden) */}
-                {wahlkreisGrenzen.map((boundary, index) => (
+                {/* Wahlkreis-Grenzen anzeigen (GeoJSON) */}
+                {showWahlkreisGrenzen && (
+                  <GeoJSON
+                    data={wahlkreisGrenzen}
+                    style={{
+                      color: '#ef4444',
+                      weight: 3,
+                      opacity: 0.8,
+                      fillColor: '#ef4444',
+                      fillOpacity: 0.1
+                    }}
+                    onEachFeature={(feature, layer) => {
+                      layer.bindPopup(`
+                        <div class="p-2">
+                          <h4 class="font-semibold text-sm">${feature.properties.name}</h4>
+                          <p class="text-xs text-gray-600">${feature.properties.description}</p>
+                        </div>
+                      `);
+                    }}
+                  />
+                )}
+                
+                {/* Alte Polygon-Implementierung (falls manuell gezeichnet) */}
+                {wahlkreisGrenzen.coordinates && wahlkreisGrenzen.coordinates.length > 0 && (
                   <Polygon
-                    key={index}
-                    positions={boundary.coordinates}
+                    positions={wahlkreisGrenzen.coordinates}
                     pathOptions={{
                       color: '#ef4444',
                       weight: 3,
@@ -906,11 +927,11 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                     <Popup>
                       <div className="p-2">
                         <h4 className="font-semibold text-sm">AGH-Wahlkreis Marzahn-Hellersdorf 6</h4>
-                        <p className="text-xs text-gray-600">Wahlkreis-Grenzen</p>
+                        <p className="text-xs text-gray-600">Manuell gezeichnete Wahlkreis-Grenzen</p>
                       </div>
                     </Popup>
                   </Polygon>
-                ))}
+                )}
                 
                 {Object.entries(locationStats).map(([location, stats]) => (
                   <div key={location}>
