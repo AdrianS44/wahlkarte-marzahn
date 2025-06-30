@@ -167,7 +167,7 @@ async def login(login_request: LoginRequest):
     return {"access_token": access_token, "token_type": "bearer", "role": user["role"]}
 
 @app.get("/api/survey-responses")
-async def get_survey_responses(current_user: str = Depends(get_current_user)):
+async def get_survey_responses(current_user: dict = Depends(get_current_user)):
     """Get all survey responses"""
     responses = []
     async for response in collection.find():
