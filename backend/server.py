@@ -133,7 +133,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             raise credentials_exception
     except jwt.PyJWTError:
         raise credentials_exception
-    return username
+    return {"username": username, "role": payload.get("role", "user")}
 
 @app.get("/")
 def read_root():
