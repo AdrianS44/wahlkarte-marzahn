@@ -16,6 +16,8 @@ const UserLogin = ({ onLogin }) => {
     setError('');
 
     try {
+      console.log('Attempting login to:', `${process.env.REACT_APP_BACKEND_URL}/api/login`);
+      
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: {
@@ -24,17 +26,22 @@ const UserLogin = ({ onLogin }) => {
         body: JSON.stringify(credentials),
       });
 
+      console.log('Login response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Login successful, role:', data.role);
         localStorage.setItem('userToken', data.access_token);
         localStorage.setItem('userRole', data.role);
         onLogin(data.access_token, data.role);
       } else {
         const errorData = await response.json();
+        console.error('Login failed:', errorData);
         setError(errorData.detail || 'Login fehlgeschlagen');
       }
     } catch (err) {
-      setError('Verbindungsfehler. Bitte versuchen Sie es später erneut.');
+      console.error('Network error during login:', err);
+      setError(`Verbindungsfehler: ${err.message}. Bitte versuchen Sie es später erneut.`);
     } finally {
       setIsLoading(false);
     }
