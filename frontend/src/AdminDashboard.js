@@ -156,6 +156,7 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
   const resetForm = () => {
     setFormData({
       location: '',
+      custom_address: '',
       age_group: '',
       household_size: '',
       satisfaction: '',
