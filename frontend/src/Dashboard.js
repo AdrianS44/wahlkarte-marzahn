@@ -251,7 +251,18 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
     return convertedGeoJson;
   }, []);
 
-  // Parse CSV data on component mount
+  // Consistent color scheme for satisfaction levels (gradient from red to green)
+  const satisfactionColors = {
+    '1': '#dc2626', // rot (sehr unzufrieden)
+    '2': '#ea580c', // orange-rot
+    '3': '#eab308', // gelb (neutral)
+    '4': '#65a30d', // grün-gelb  
+    '5': '#16a34a'  // grün (sehr zufrieden)
+  };
+  
+  const getSatisfactionColor = (level) => {
+    return satisfactionColors[level] || '#6b7280'; // fallback grau
+  };
   useEffect(() => {
     const result = Papa.parse(surveyData, {
       header: true,
