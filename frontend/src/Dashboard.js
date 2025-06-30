@@ -729,7 +729,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
           {/* Second Row of Filters */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Soziale Medien Plattform</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q013. Welche sozialen Medien nutzen Sie?</label>
               <select
                 value={filters.socialMediaPlatform}
                 onChange={(e) => setFilters({...filters, socialMediaPlatform: e.target.value})}
@@ -746,7 +746,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Informationsquelle</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q012. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk?</label>
               <select
                 value={filters.informationSource}
                 onChange={(e) => setFilters({...filters, informationSource: e.target.value})}
@@ -763,7 +763,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Zukunftsoptimismus</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?</label>
               <select
                 value={filters.futureOutlook}
                 onChange={(e) => setFilters({...filters, futureOutlook: e.target.value})}
@@ -777,7 +777,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Politische Vertretung</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q007. Wie stark fühlen Sie sich im Bezirk politisch vertreten?</label>
               <select
                 value={filters.politicalRepresentation}
                 onChange={(e) => setFilters({...filters, politicalRepresentation: e.target.value})}
