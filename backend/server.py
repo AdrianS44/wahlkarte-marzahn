@@ -78,6 +78,7 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
 
 # Admin credentials (in production, store in database with hashed passwords)
 ADMIN_USERS = {
