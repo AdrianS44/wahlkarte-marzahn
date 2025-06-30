@@ -596,7 +596,13 @@ function App() {
               </button>
               
               <button
-                onClick={() => window.open('#', '_blank')}
+                onClick={() => {
+                  const adminWindow = window.open('/admin', '_blank');
+                  if (!adminWindow) {
+                    // Fallback: Show admin login in current window
+                    setIsAdminMode(true);
+                  }
+                }}
                 className="flex items-center space-x-2 py-2 px-3 text-sm bg-blue-100 hover:bg-blue-200 rounded-md"
                 title="Admin-Bereich öffnen"
               >
