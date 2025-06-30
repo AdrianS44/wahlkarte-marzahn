@@ -125,14 +125,16 @@ async def login(login_request: LoginRequest):
     username = login_request.username
     password = login_request.password
     
-    if username not in ADMIN_USERS:
+    # Find user in database
+    user = await users_collection.find_one({"username": username})
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    if not verify_password(password, ADMIN_USERS[username]):
+    if not verify_password(password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -141,9 +143,9 @@ async def login(login_request: LoginRequest):
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": username}, expires_delta=access_token_expires
+        data={"sub": username, "role": user["role"]}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "role": user["role"]}
 
 @app.get("/api/survey-responses")
 async def get_survey_responses(current_user: str = Depends(get_current_user)):
