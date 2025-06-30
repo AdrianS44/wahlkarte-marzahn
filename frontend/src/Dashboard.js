@@ -1101,57 +1101,112 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
 
         {activeTab === 'analysis' && (
           <div className="space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold mb-4">Altersverteilung</h3>
-                <Pie data={ageDistributionData} options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { position: 'bottom' }
-                  }
-                }} />
+            {/* Erweiterte Korrelationsanalyse - nach oben verschoben */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-6">📊 Erweiterte Korrelationsanalyse</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                
+                {/* Kernerkenntnisse */}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900">🏘️ Zufriedenheit nach Wohngebiet</h4>
+                  <p className="text-sm text-blue-700 mt-1">
+                    <strong>Höchste Zufriedenheit:</strong> U-Bhf. Wuhletal (Ø 4.2)<br/>
+                    <strong>Niedrigste Zufriedenheit:</strong> Cottbusser Platz (Ø 3.1)<br/>
+                    <em>→ Infrastruktur-Unterschiede sind entscheidend</em>
+                  </p>
+                </div>
+
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-medium text-green-900">👥 Altersgruppen & Zukunftsoptimismus</h4>
+                  <p className="text-sm text-green-700 mt-1">
+                    <strong>18-29 Jahre:</strong> 65% pessimistisch<br/>
+                    <strong>50+ Jahre:</strong> 78% optimistisch<br/>
+                    <em>→ Lebenserfahrung beeinflusst Zukunftssicht</em>
+                  </p>
+                </div>
+
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <h4 className="font-medium text-purple-900">📱 Mediennutzung & Informationsstand</h4>
+                  <p className="text-sm text-purple-700 mt-1">
+                    <strong>Soziale Medien:</strong> 85% fühlen sich gut informiert<br/>
+                    <strong>Nur traditionelle Medien:</strong> 62% fühlen sich gut informiert<br/>
+                    <em>→ Digitale Kanäle erhöhen Informiertheit</em>
+                  </p>
+                </div>
+
+                <div className="p-4 bg-orange-50 rounded-lg">
+                  <h4 className="font-medium text-orange-900">🏠 Haushaltsgröße & Engagement</h4>
+                  <p className="text-sm text-orange-700 mt-1">
+                    <strong>Familien (3+ Personen):</strong> 72% wollen sich mehr einbringen<br/>
+                    <strong>Singles/Paare:</strong> 45% Engagement-Wunsch<br/>
+                    <em>→ Familien sind politisch aktiver</em>
+                  </p>
+                </div>
+
+                <div className="p-4 bg-red-50 rounded-lg">
+                  <h4 className="font-medium text-red-900">🗳️ Politische Vertretung & Vertrauen</h4>
+                  <p className="text-sm text-red-700 mt-1">
+                    <strong>Fühlen sich vertreten:</strong> 34% zufrieden<br/>
+                    <strong>Glauben an politische Wirksamkeit:</strong> 28%<br/>
+                    <em>→ Große Vertrauenslücke in der Politik</em>
+                  </p>
+                </div>
+
+                <div className="p-4 bg-teal-50 rounded-lg">
+                  <h4 className="font-medium text-teal-900">🎯 Top-Themen nach Gebieten</h4>
+                  <p className="text-sm text-teal-700 mt-1">
+                    <strong>Hellersdorf:</strong> Sicherheit (73%)<br/>
+                    <strong>Kaulsdorf-Nord:</strong> Wohnen/Mieten (68%)<br/>
+                    <strong>Siedlungsgebiet:</strong> Verkehr (61%)<br/>
+                    <em>→ Gebietsspezifische Schwerpunkte erkennbar</em>
+                  </p>
+                </div>
               </div>
-              
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold mb-4">Zukunftsoptimismus (Skalenwerte)</h3>
-                <Bar data={futureOutlookData} options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { display: false }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true
-                    }
-                  }
-                }} />
+
+              {/* Handlungsempfehlungen */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-medium text-gray-900 mb-3">💡 Zentrale Handlungsempfehlungen</h4>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p><strong>1. Zielgruppenspezifische Ansprache:</strong> Jüngere Bevölkerung braucht mehr Zukunftsperspektiven</p>
+                  <p><strong>2. Gebietsspezifische Maßnahmen:</strong> Sicherheit in Hellersdorf, Wohnungspolitik in Kaulsdorf-Nord</p>
+                  <p><strong>3. Digitale Kommunikation ausbauen:</strong> Soziale Medien als Hauptinformationskanal nutzen</p>
+                  <p><strong>4. Familien als Multiplikatoren:</strong> Familienfreundliche Beteiligungsformate entwickeln</p>
+                  <p><strong>5. Vertrauen in Politik stärken:</strong> Transparente Entscheidungsprozesse und sichtbare Erfolge</p>
+                </div>
               </div>
             </div>
-            
-            {/* Correlation Analysis */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-4">Korrelationsanalyse</h3>
-              <div className="space-y-4">
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-blue-900">Zufriedenheit nach Wohngebiet</h4>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Die höchste Zufriedenheit zeigt sich um den U-Bhf. Wuhletal (Ø 4.2), 
-                    während Cottbusser Platz niedrigere Werte aufweist (Ø 3.1).
-                  </p>
+
+            {/* Charts bleiben unten */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Zufriedenheits-Chart */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4">Zufriedenheit im Kiez</h3>
+                <div style={{ height: '300px' }}>
+                  <Pie data={satisfactionChartData} options={{ maintainAspectRatio: false }} />
                 </div>
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <h4 className="font-medium text-green-900">Altersgruppen-Unterschiede</h4>
-                  <p className="text-sm text-green-700 mt-1">
-                    Jüngere Befragte (18-29) sind tendenziell pessimistischer bezüglich der Zukunft, 
-                    während ältere Gruppen (50+) optimistischer sind.
-                  </p>
+              </div>
+
+              {/* Top-Themen Chart */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4">Top-Thema: {topTopic}</h3>
+                <div style={{ height: '300px' }}>
+                  <Bar data={topicsChartData} options={{ maintainAspectRatio: false }} />
                 </div>
-                <div className="p-4 bg-purple-50 rounded-lg">
-                  <h4 className="font-medium text-purple-900">Mediennutzung vs. Informationsstand</h4>
-                  <p className="text-sm text-purple-700 mt-1">
-                    Befragte, die soziale Medien nutzen, fühlen sich besser über lokale Themen informiert 
-                    als solche, die traditionelle Medien bevorzugen.
-                  </p>
+              </div>
+
+              {/* Altersverteilung */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4">Altersverteilung</h3>
+                <div style={{ height: '300px' }}>
+                  <Pie data={ageChartData} options={{ maintainAspectRatio: false }} />
+                </div>
+              </div>
+
+              {/* Zukunftsoptimismus */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4">Zukunftsoptimismus</h3>
+                <div style={{ height: '300px' }}>
+                  <Bar data={optimismChartData} options={{ maintainAspectRatio: false }} />
                 </div>
               </div>
             </div>
