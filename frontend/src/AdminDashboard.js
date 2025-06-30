@@ -180,6 +180,76 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
     setShowAddForm(false);
   };
 
+  const resetUserForm = () => {
+    setUserFormData({
+      username: '',
+      password: '',
+      role: 'user'
+    });
+    setEditingUser(null);
+    setShowUserForm(false);
+  };
+
+  const handleUserSubmit = async (e) => {
+    e.preventDefault();
+    const url = editingUser 
+      ? `${process.env.REACT_APP_BACKEND_URL}/api/users/${editingUser._id}`
+      : `${process.env.REACT_APP_BACKEND_URL}/api/users`;
+    
+    const method = editingUser ? 'PUT' : 'POST';
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(userFormData),
+      });
+
+      if (response.ok) {
+        fetchUsers();
+        resetUserForm();
+        alert(editingUser ? 'Benutzer aktualisiert!' : 'Neuer Benutzer erstellt!');
+      }
+    } catch (error) {
+      console.error('Error saving user:', error);
+      alert('Fehler beim Speichern!');
+    }
+  };
+
+  const handleUserDelete = async (id) => {
+    if (window.confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?')) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          fetchUsers();
+          alert('Benutzer gelöscht!');
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Fehler beim Löschen!');
+      }
+    }
+  };
+
+  const handleUserEdit = (user) => {
+    setEditingUser(user);
+    setUserFormData({
+      username: user.username,
+      password: '', // Don't prefill password
+      role: user.role
+    });
+    setShowUserForm(true);
+  };
+
   const handleCSVImport = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
