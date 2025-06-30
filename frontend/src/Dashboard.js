@@ -1267,7 +1267,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold mb-4">Zukunftsoptimismus</h3>
                 <div style={{ height: '300px' }}>
-                  <Bar data={optimismChartData} options={{ maintainAspectRatio: false }} />
+                  <Bar data={futureOutlookData} options={{ maintainAspectRatio: false }} />
                 </div>
               </div>
             </div>
