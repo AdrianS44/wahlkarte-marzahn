@@ -122,13 +122,6 @@ const UserLogin = ({ onLogin }) => {
               {isLoading ? 'Anmeldung läuft...' : 'Anmelden'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              Test Login: testuser / password123<br/>
-              Admin Login: admin / secret
-            </p>
-          </div>
         </div>
       </div>
     </div>
