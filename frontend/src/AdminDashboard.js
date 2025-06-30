@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit3, Trash2, Download, Upload, LogOut, Save, X } from 'lucide-react';
+import { Plus, Edit3, Trash2, Download, Upload, LogOut, Save, X, Users, UserPlus } from 'lucide-react';
 
 const AdminDashboard = ({ token, onLogout }) => {
   const [surveyResponses, setSurveyResponses] = useState([]);
