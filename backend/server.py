@@ -231,7 +231,7 @@ async def delete_survey_response(
 @app.post("/api/import-csv")
 async def import_csv_data(
     file: UploadFile = File(...),
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Import survey data from CSV file"""
     if not file.filename.endswith('.csv'):
@@ -274,7 +274,7 @@ async def import_csv_data(
                 "engagement_wish": row.get("Q009. Würden Sie sich gerne stärker bei lokalen Themen einbringen?"),
                 "future_wishes": row.get("Q010. Was wünschen Sie sich für die Zukunft in Ihrem Kiez?"),
                 "created_at": datetime.utcnow(),
-                "created_by": current_user,
+                "created_by": current_user["username"],
                 "import_source": "csv_upload"
             }
             
