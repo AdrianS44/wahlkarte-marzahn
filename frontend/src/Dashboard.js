@@ -284,22 +284,28 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
         !geocodedAddresses[response.custom_address]
       );
 
+      if (customResponses.length === 0) return;
+
       for (const response of customResponses) {
-        const coordinates = await geocodeAddress(response.custom_address);
-        setGeocodedAddresses(prev => ({
-          ...prev,
-          [response.custom_address]: coordinates
-        }));
-        
-        // Kleine Pause zwischen Requests um Rate Limits zu vermeiden
-        await new Promise(resolve => setTimeout(resolve, 500));
+        try {
+          const coordinates = await geocodeAddress(response.custom_address);
+          setGeocodedAddresses(prev => ({
+            ...prev,
+            [response.custom_address]: coordinates
+          }));
+          
+          // Kleine Pause zwischen Requests um Rate Limits zu vermeiden
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (error) {
+          console.error('Geocoding error for address:', response.custom_address, error);
+        }
       }
     };
 
     if (filteredData.length > 0) {
       geocodeCustomAddresses();
     }
-  }, [filteredData]);
+  }, [filteredData.length]); // Nur bei Änderung der Datenmenge neu geocoden
 
   // Consistent color scheme for satisfaction levels (gradient from red to green)
   const satisfactionColors = {
