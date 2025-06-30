@@ -201,8 +201,9 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminToken, setAdminToken] = useState(null);
-  const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState([]);
+  const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState(wahlkreisGrenzen);
   const [showBoundaryEditor, setShowBoundaryEditor] = useState(false);
+  const [showWahlkreisGrenzen, setShowWahlkreisGrenzen] = useState(true);
 
   // Parse CSV data on component mount
   useEffect(() => {
