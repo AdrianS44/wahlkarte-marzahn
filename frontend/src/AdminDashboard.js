@@ -57,6 +57,9 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
 
   useEffect(() => {
     fetchSurveyResponses();
+    if (userRole === 'admin') {
+      fetchUsers();
+    }
   }, []);
 
   const fetchSurveyResponses = async () => {
