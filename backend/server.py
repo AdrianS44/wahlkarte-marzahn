@@ -42,32 +42,33 @@ users_collection = database.users
 
 # Pydantic models
 class SurveyResponse(BaseModel):
-    location: Optional[str] = None
-    age_group: Optional[str] = None
-    household_size: Optional[str] = None
-    satisfaction: Optional[str] = None
-    future_outlook: Optional[str] = None
-    topics_housing: Optional[str] = None
-    topics_security: Optional[str] = None
-    topics_education: Optional[str] = None
-    topics_traffic: Optional[str] = None
-    topics_environment: Optional[str] = None
-    topics_community: Optional[str] = None
-    social_media_usage: Optional[str] = None
-    facebook: Optional[str] = None
-    instagram: Optional[str] = None
-    tiktok: Optional[str] = None
-    youtube: Optional[str] = None
-    whatsapp: Optional[str] = None
-    info_source_social: Optional[str] = None
-    info_source_print: Optional[str] = None
-    info_source_tv: Optional[str] = None
-    info_source_newsletter: Optional[str] = None
-    info_source_events: Optional[str] = None
-    political_representation: Optional[str] = None
-    kiezmacher_known: Optional[str] = None
-    engagement_wish: Optional[str] = None
-    future_wishes: Optional[str] = None
+    location: str
+    custom_address: Optional[str] = None  # Neue Option für beliebige Adressen
+    age_group: str
+    household_size: str
+    satisfaction: str
+    future_outlook: str
+    topics_housing: str = ""
+    topics_security: str = ""
+    topics_education: str = ""
+    topics_traffic: str = ""
+    topics_environment: str = ""
+    topics_community: str = ""
+    social_media_usage: str = ""
+    facebook: str = ""
+    instagram: str = ""
+    tiktok: str = ""
+    youtube: str = ""
+    whatsapp: str = ""
+    info_source_social: str = ""
+    info_source_print: str = ""
+    info_source_tv: str = ""
+    info_source_newsletter: str = ""
+    info_source_events: str = ""
+    political_representation: str = ""
+    kiezmacher_known: str = ""
+    engagement_wish: str = ""
+    future_wishes: str = ""
     created_at: Optional[datetime] = None
     created_by: Optional[str] = None
 
