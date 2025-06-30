@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, Polygon } from 'react-leaflet';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import { Filter, Map, BarChart3, Users, TrendingUp, MapPin, Home, Info } from 'lucide-react';
+import { Filter, Map, BarChart3, Users, TrendingUp, MapPin, Home, Info, Settings, Edit } from 'lucide-react';
 import Papa from 'papaparse';
+import AdminLogin from './AdminLogin';
+import AdminDashboard from './AdminDashboard';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
