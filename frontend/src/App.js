@@ -200,6 +200,40 @@ function App() {
     kiezmacherKnown: ''
   });
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [adminToken, setAdminToken] = useState(null);
+  const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState([]);
+  const [showBoundaryEditor, setShowBoundaryEditor] = useState(false);
+
+  // Check for existing admin token
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      setAdminToken(token);
+    }
+  }, []);
+
+  const handleAdminLogin = (token) => {
+    setAdminToken(token);
+    setIsAdminMode(true);
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('adminToken');
+    setAdminToken(null);
+    setIsAdminMode(false);
+  };
+
+  // Show admin interface if logged in
+  if (isAdminMode && adminToken) {
+    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
+  }
+
+  // Show login screen for admin access
+  if (adminToken && !isAdminMode) {
+    setIsAdminMode(true);
+    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
+  }
 
   // Parse CSV data on component mount
   useEffect(() => {
