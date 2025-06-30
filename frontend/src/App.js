@@ -885,7 +885,18 @@ function App() {
 
         {activeTab === 'map' && (
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold mb-4">Interaktive Karte - Marzahn-Hellersdorf</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Interaktive Karte - Marzahn-Hellersdorf</h3>
+              {showBoundaryEditor && (
+                <div className="text-sm bg-yellow-100 border border-yellow-300 rounded p-2">
+                  <p className="text-yellow-800">
+                    💡 <strong>Tipp:</strong> Ihre SHP-Dateien können zu GeoJSON konvertiert werden.
+                    Verwenden Sie Tools wie <a href="https://mapshaper.org/" target="_blank" rel="noopener noreferrer" className="underline">mapshaper.org</a> 
+                    oder QGIS für die Konvertierung.
+                  </p>
+                </div>
+              )}
+            </div>
             <div style={{ height: '600px' }}>
               <MapContainer
                 center={[52.5200, 13.5900]}
@@ -896,6 +907,28 @@ function App() {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
+                
+                {/* Wahlkreis-Grenzen anzeigen (falls vorhanden) */}
+                {wahlkreisGrenzen.map((boundary, index) => (
+                  <Polygon
+                    key={index}
+                    positions={boundary.coordinates}
+                    pathOptions={{
+                      color: '#ef4444',
+                      weight: 3,
+                      opacity: 0.8,
+                      fillColor: '#ef4444',
+                      fillOpacity: 0.1
+                    }}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <h4 className="font-semibold text-sm">AGH-Wahlkreis Marzahn-Hellersdorf 6</h4>
+                        <p className="text-xs text-gray-600">Wahlkreis-Grenzen</p>
+                      </div>
+                    </Popup>
+                  </Polygon>
+                ))}
                 
                 {Object.entries(locationStats).map(([location, stats]) => (
                   <div key={location}>
@@ -922,7 +955,70 @@ function App() {
             <div className="mt-4 text-sm text-gray-600">
               <p><strong>Legende:</strong> Die Kreise zeigen die durchschnittliche Zufriedenheit pro Gebiet. Größere Kreise = höhere Zufriedenheit.</p>
               <p>Grün = hohe Zufriedenheit (&gt;3.5), Orange = mittlere Zufriedenheit (2.5-3.5), Rot = niedrige Zufriedenheit (&lt;2.5)</p>
+              {wahlkreisGrenzen.length > 0 && (
+                <p className="text-red-600">Rote Linien zeigen die Wahlkreis-Grenzen.</p>
+              )}
             </div>
+            
+            {/* Boundary Editor Panel */}
+            {showBoundaryEditor && (
+              <div className="mt-6 p-4 bg-gray-50 border rounded-lg">
+                <h4 className="font-semibold mb-3">Wahlkreis-Grenzen Management</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      GeoJSON-Daten für Wahlkreis 6 hochladen:
+                    </label>
+                    <input
+                      type="file"
+                      accept=".geojson,.json"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            try {
+                              const geojson = JSON.parse(event.target.result);
+                              if (geojson.type === 'FeatureCollection' || geojson.type === 'Feature') {
+                                const coordinates = geojson.type === 'FeatureCollection' 
+                                  ? geojson.features[0].geometry.coordinates[0]
+                                  : geojson.geometry.coordinates[0];
+                                setWahlkreisGrenzen([{ coordinates: coordinates.map(coord => [coord[1], coord[0]]) }]);
+                                alert('Wahlkreis-Grenzen erfolgreich geladen!');
+                              }
+                            } catch (error) {
+                              alert('Fehler beim Laden der GeoJSON-Datei.');
+                            }
+                          };
+                          reader.readAsText(file);
+                        }
+                      }}
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                  </div>
+                  
+                  <div className="text-sm text-gray-600">
+                    <p><strong>Ihre SHP-Dateien konvertieren:</strong></p>
+                    <ol className="list-decimal list-inside mt-2 space-y-1">
+                      <li>Besuchen Sie <a href="https://mapshaper.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">mapshaper.org</a></li>
+                      <li>Laden Sie alle SHP-Dateien hoch (.shp, .dbf, .prj, .shx)</li>
+                      <li>Filtern Sie nach Wahlkreis 6 (falls nötig)</li>
+                      <li>Exportieren Sie als GeoJSON</li>
+                      <li>Laden Sie die GeoJSON-Datei hier hoch</li>
+                    </ol>
+                  </div>
+                  
+                  {wahlkreisGrenzen.length > 0 && (
+                    <button
+                      onClick={() => setWahlkreisGrenzen([])}
+                      className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                    >
+                      Grenzen entfernen
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
