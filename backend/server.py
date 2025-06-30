@@ -80,11 +80,29 @@ class Token(BaseModel):
     token_type: str
     role: str
 
-# Admin credentials (in production, store in database with hashed passwords)
-ADMIN_USERS = {
-    "admin": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # secret
-    "survey_admin": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"  # secret
-}
+# Database collections
+users_collection = database.users
+
+# Initialize default users if not exist
+async def initialize_default_users():
+    existing_admin = await users_collection.find_one({"username": "admin"})
+    if not existing_admin:
+        default_users = [
+            {
+                "username": "admin",
+                "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # secret
+                "role": "admin",
+                "created_at": datetime.utcnow()
+            },
+            {
+                "username": "testuser",
+                "password": "$2b$12$LQv3c4yqBWxbQFcXAc5uNOyDXkOJ9n/vDOO8.4pPZD3XkOCKN8Xj6",  # password123
+                "role": "user",
+                "created_at": datetime.utcnow()
+            }
+        ]
+        await users_collection.insert_many(default_users)
+        print("Default users initialized")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
