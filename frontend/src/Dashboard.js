@@ -205,14 +205,6 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [wahlkreisGrenzen, setWahlkreisGrenzen] = useState([]);
   const [showBoundaryEditor, setShowBoundaryEditor] = useState(false);
 
-  // Check for existing admin token
-  useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-      setAdminToken(token);
-    }
-  }, []);
-
   // Parse CSV data on component mount
   useEffect(() => {
     const result = Papa.parse(surveyData, {
