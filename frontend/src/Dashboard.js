@@ -1103,10 +1103,14 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 ))}
 
                 {/* Zusätzliche Marker für custom addresses */}
-                {filteredData
-                  .filter(response => response.custom_address && response.custom_address.trim())
-                  .map((response, index) => {
+                {(() => {
+                  const customData = filteredData.filter(response => response.custom_address && response.custom_address.trim());
+                  console.log('Custom addresses found:', customData.map(r => r.custom_address)); // Debug
+                  console.log('Geocoded addresses:', geocodedAddresses); // Debug
+                  
+                  return customData.map((response, index) => {
                     const coordinates = geocodedAddresses[response.custom_address] || [52.515, 13.585];
+                    console.log(`Rendering marker for: ${response.custom_address} at`, coordinates); // Debug
                     
                     return (
                       <Marker 
@@ -1134,8 +1138,8 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                         </Popup>
                       </Marker>
                     );
-                  })
-                }
+                  });
+                })()}
               </MapContainer>
             </div>
             <div className="mt-4 text-sm text-gray-600">
