@@ -952,7 +952,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 {/* Wahlkreis-Grenzen anzeigen (GeoJSON) */}
                 {showWahlkreisGrenzen && (
                   <GeoJSON
-                    data={wahlkreisGeoJson}
+                    data={convertedWahlkreisGeoJson}
                     style={{
                       color: '#ef4444',
                       weight: 3,
@@ -963,8 +963,9 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                     onEachFeature={(feature, layer) => {
                       layer.bindPopup(`
                         <div class="p-2">
-                          <h4 class="font-semibold text-sm">${feature.properties.name}</h4>
-                          <p class="text-xs text-gray-600">${feature.properties.description}</p>
+                          <h4 class="font-semibold text-sm">${feature.properties.name || 'Wahlkreis Marzahn-Hellersdorf 6'}</h4>
+                          <p class="text-xs text-gray-600">${feature.properties.description || 'Wahlkreis-Grenzen'}</p>
+                          <p class="text-xs text-gray-500">AWK: ${feature.properties.AWK || '06'}</p>
                         </div>
                       `);
                     }}
