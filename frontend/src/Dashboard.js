@@ -392,6 +392,38 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
     });
   }, [parsedData, filters]);
 
+  // Geocoding für custom addresses
+  useEffect(() => {
+    const geocodeCustomAddresses = async () => {
+      const customResponses = filteredData.filter(response => 
+        response.custom_address && 
+        response.custom_address.trim() && 
+        !geocodedAddresses[response.custom_address]
+      );
+
+      if (customResponses.length === 0) return;
+
+      for (const response of customResponses) {
+        try {
+          const coordinates = await geocodeAddress(response.custom_address);
+          setGeocodedAddresses(prev => ({
+            ...prev,
+            [response.custom_address]: coordinates
+          }));
+          
+          // Kleine Pause zwischen Requests um Rate Limits zu vermeiden
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (error) {
+          console.error('Geocoding error for address:', response.custom_address, error);
+        }
+      }
+    };
+
+    if (filteredData.length > 0) {
+      geocodeCustomAddresses();
+    }
+  }, [filteredData.length, geocodedAddresses]); // Geocoding dependencies
+
   // Calculate statistics for different areas
   const locationStats = useMemo(() => {
     const stats = {};
