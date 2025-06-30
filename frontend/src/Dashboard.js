@@ -185,7 +185,7 @@ const surveyData = `id. Antwort ID;Q00. In welchem Kiez wohnen Sie?;Q001. Wie al
 150;Um den U-Bhf. Cottbusser Platz herum;50-69;1;Ja;Nein;Nein;Ja;Ja;Nein;Nein;;Ja;Ja;Nein;Ja;Ja;Nein;;2;Ja;Ja;Nein;Nein;Ja;Nein;eher pessimistisch;ausreichend;3;2;Ja;Weiß nicht;Mehr Sicherheit und Sauberkeit
 151;Um den U-Bhf. Cottbusser Platz herum;18-29;2;Nein;Nein;Nein;Nein;Nein;Nein;Ja;;Nein;Nein;Nein;Ja;Nein;Nein;;4;Ja;Ja;Nein;Nein;Nein;Nein;eher pessimistisch;ausreichend;2;5;Nein;Ja;"Ich wünsche mir eine stärkere und effektivere Bekämpfung rechter Strukturen im Kiez. Es passiert z.B. sehr häufig, dass man Aufkleber mit Inhalten wie ""I &lt;3 NS"" an der Fassade von U-Cottbusser Platz (Eingang vom Helwichstorp Park) sieht, was mich und sicherlich auch andere Mitbewohner verunsichert."`;
 
-function App() {
+function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [parsedData, setParsedData] = useState([]);
   const [filters, setFilters] = useState({
     location: '',
