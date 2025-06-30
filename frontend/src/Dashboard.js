@@ -1018,7 +1018,8 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                     <Circle
                       center={stats.coordinates}
                       radius={stats.avgSatisfaction * 200}
-                      color={stats.avgSatisfaction > 3.5 ? 'green' : stats.avgSatisfaction > 2.5 ? 'orange' : 'red'}
+                      color={getSatisfactionColor(Math.round(stats.avgSatisfaction).toString())}
+                      fillColor={getSatisfactionColor(Math.round(stats.avgSatisfaction).toString())}
                       fillOpacity={0.3}
                     />
                   </div>
