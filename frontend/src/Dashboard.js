@@ -1087,8 +1087,9 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
               </MapContainer>
             </div>
             <div className="mt-4 text-sm text-gray-600">
-              <p><strong>Legende:</strong> Die Kreise zeigen die durchschnittliche Zufriedenheit pro Gebiet. Größere Kreise = höhere Zufriedenheit.</p>
-              <p>Grün = hohe Zufriedenheit (&gt;3.5), Orange = mittlere Zufriedenheit (2.5-3.5), Rot = niedrige Zufriedenheit (&lt;2.5)</p>
+              <p><strong>Legende:</strong></p>
+              <p>🟢 <strong>Grüne Marker:</strong> U-Bahn-Gebiete und Siedlungsgebiet mit aggregierten Daten</p>
+              <p>🔵 <strong>Blaue Marker:</strong> Individuelle Standorte aus Bürgergesprächen</p>
               {showWahlkreisGrenzen && (
                 <p><strong>Rote Umrandung:</strong> Wahlkreis Marzahn-Hellersdorf 6 Grenzen</p>
               )}
