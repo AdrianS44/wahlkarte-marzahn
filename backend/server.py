@@ -289,7 +289,7 @@ async def import_csv_data(
         raise HTTPException(status_code=400, detail=f"Error importing CSV: {str(e)}")
 
 @app.get("/api/export-csv")
-async def export_csv_data(current_user: str = Depends(get_current_user)):
+async def export_csv_data(current_user: dict = Depends(get_current_user)):
     """Export survey data to CSV format"""
     try:
         responses = []
