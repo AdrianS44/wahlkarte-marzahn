@@ -38,6 +38,7 @@ MONGODB_URL = "mongodb://localhost:27017"
 client = AsyncIOMotorClient(MONGODB_URL)
 database = client.survey_dashboard
 collection = database.survey_responses
+users_collection = database.users
 
 # Pydantic models
 class SurveyResponse(BaseModel):
