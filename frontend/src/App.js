@@ -229,10 +229,9 @@ function App() {
     return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
   }
 
-  // Show login screen for admin access
-  if (adminToken && !isAdminMode) {
-    setIsAdminMode(true);
-    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
+  // Show admin login if admin mode requested but not logged in
+  if (isAdminMode && !adminToken) {
+    return <AdminLogin onLogin={handleAdminLogin} />;
   }
 
   // Parse CSV data on component mount
