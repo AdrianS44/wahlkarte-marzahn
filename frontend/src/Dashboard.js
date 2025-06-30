@@ -187,6 +187,7 @@ const surveyData = `id. Antwort ID;Q00. In welchem Kiez wohnen Sie?;Q001. Wie al
 
 function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [parsedData, setParsedData] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [filters, setFilters] = useState({
     location: '',
     ageGroup: '',
@@ -304,26 +305,88 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   const getSatisfactionColor = (level) => {
     return satisfactionColors[level] || '#6b7280'; // fallback grau
   };
+
+  // Load data from API instead of CSV
   useEffect(() => {
-    const result = Papa.parse(surveyData, {
-      header: true,
-      skipEmptyLines: true
-    });
-    
-    // More lenient filtering - include more data rows
-    const cleanedData = result.data.filter(row => {
-      const location = row['Q00. In welchem Kiez wohnen Sie?'];
-      const age = row['Q001. Wie alt sind Sie?'];
+    const loadApiData = async () => {
+      if (!userToken) return;
       
-      // Keep rows where location OR age has valid data (not strictly both required)
-      return (location && location !== 'N/A' && location !== '') || 
-             (age && age !== 'N/A' && age !== '');
-    });
-    
-    console.log(`Total rows in CSV: ${result.data.length}`);
-    console.log(`Valid survey responses included: ${cleanedData.length}`);
-    setParsedData(cleanedData);
-  }, []);
+      try {
+        setIsLoadingData(true);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/survey-responses`, {
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+          },
+        });
+        
+        if (response.ok) {
+          const apiData = await response.json();
+          console.log('API data loaded:', apiData.length, 'responses');
+          
+          // Transform API data to match CSV structure for compatibility
+          const transformedData = apiData.map(item => ({
+            'Q00. In welchem Kiez wohnen Sie?': item.location,
+            'Q001. Wie alt sind Sie?': item.age_group,
+            'Q002. Wie viele Personen leben (inkl. Ihnen) in Ihrem Haushalt?': item.household_size,
+            'Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?': item.satisfaction,
+            'Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?': item.future_outlook,
+            'Q004[SQ001]. Welche Themen beschäftigen Sie aktuell am meisten? [Wohnen / Mieten]': item.topics_housing,
+            'Q004[SQ002]. Welche Themen beschäftigen Sie aktuell am meisten? [Sicherheit]': item.topics_security,
+            'Q004[SQ003]. Welche Themen beschäftigen Sie aktuell am meisten? [Bildung / Schule]': item.topics_education,
+            'Q004[SQ004]. Welche Themen beschäftigen Sie aktuell am meisten? [Verkehr]': item.topics_traffic,
+            'Q004[SQ005]. Welche Themen beschäftigen Sie aktuell am meisten? [Umwelt]': item.topics_environment,
+            'Q004[SQ006]. Welche Themen beschäftigen Sie aktuell am meisten? [Nachbarschaftliches Miteinander]': item.topics_community,
+            'Q007. Wie stark fühlen Sie sich im Bezirk politisch vertreten?': item.political_representation,
+            'Q009. Würden Sie sich gerne stärker bei lokalen Themen einbringen?': item.engagement_wish,
+            'Q011. Haben Sie schon einmal etwas von den "Kiezmachern" gehört?': item.kiezmacher_known,
+            'Q012[SQ001]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Soziale Medien]': item.info_source_social,
+            'Q012[SQ003]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Zeitung/Print-Medien]': item.info_source_print,
+            'Q012[SQ004]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Fernsehen/TV]': item.info_source_tv,
+            'Q012[SQ006]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Newsletter]': item.info_source_newsletter,
+            'Q012[SQ007]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Informationsveranstaltung]': item.info_source_events,
+            'Q013[SQ001]. Welche sozialen Medien nutzen Sie? [Facebook]': item.facebook,
+            'Q013[SQ002]. Welche sozialen Medien nutzen Sie? [Instagram]': item.instagram,
+            'Q013[SQ003]. Welche sozialen Medien nutzen Sie? [TikTok]': item.tiktok,
+            'Q013[SQ004]. Welche sozialen Medien nutzen Sie? [YouTube]': item.youtube,
+            'Q013[SQ005]. Welche sozialen Medien nutzen Sie? [WhatsApp]': item.whatsapp,
+            // Add custom_address field
+            custom_address: item.custom_address
+          }));
+          
+          setParsedData(transformedData);
+          console.log('Data transformed, custom addresses:', transformedData.filter(d => d.custom_address).length);
+        } else {
+          console.error('Failed to load API data:', response.status);
+          // Fallback to CSV data if API fails
+          loadCsvData();
+        }
+      } catch (error) {
+        console.error('Error loading API data:', error);
+        // Fallback to CSV data if API fails
+        loadCsvData();
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    // Fallback CSV loading function
+    const loadCsvData = () => {
+      const result = Papa.parse(surveyData, {
+        header: true,
+        delimiter: ';',
+        skipEmptyLines: true
+      });
+      
+      console.log('Fallback: CSV data loaded:', result.data.length, 'responses');
+      setParsedData(result.data);
+    };
+
+    if (userToken) {
+      loadApiData();
+    } else {
+      loadCsvData();
+    }
+  }, [userToken]);
 
   // Filter data based on selected filters
   const filteredData = useMemo(() => {
