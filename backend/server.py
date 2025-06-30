@@ -215,7 +215,7 @@ async def update_survey_response(
 @app.delete("/api/survey-responses/{response_id}")
 async def delete_survey_response(
     response_id: str,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Delete a survey response"""
     try:
