@@ -178,12 +178,12 @@ async def get_survey_responses(current_user: dict = Depends(get_current_user)):
 @app.post("/api/survey-responses")
 async def create_survey_response(
     response: SurveyResponse,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Create a new survey response"""
     response_dict = response.dict()
     response_dict["created_at"] = datetime.utcnow()
-    response_dict["created_by"] = current_user
+    response_dict["created_by"] = current_user["username"]
     
     result = await collection.insert_one(response_dict)
     return {"id": str(result.inserted_id), "message": "Survey response created successfully"}
