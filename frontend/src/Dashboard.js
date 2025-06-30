@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, Polygon, GeoJSON } from 'react-leaflet';
+import L from 'leaflet';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { Filter, Map, BarChart3, Users, TrendingUp, MapPin, Home, Info, Settings, Edit, LogOut } from 'lucide-react';
