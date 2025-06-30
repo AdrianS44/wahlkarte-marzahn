@@ -392,27 +392,26 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   }, [filteredData]);
 
   // Generate chart data with consistent colors
+  // Zufriedenheits-Chart mit konsistenten Farben
   const satisfactionChartData = useMemo(() => {
-    const satisfactionCounts = {};
-    
-    filteredData.forEach(row => {
-      const satisfaction = row['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'];
+    const satisfactionCounts = filteredData.reduce((acc, response) => {
+      const satisfaction = response['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'];
       if (satisfaction && satisfaction !== 'N/A') {
-        satisfactionCounts[satisfaction] = (satisfactionCounts[satisfaction] || 0) + 1;
+        acc[satisfaction] = (acc[satisfaction] || 0) + 1;
       }
-    });
-    
+      return acc;
+    }, {});
+
+    const labels = ['1', '2', '3', '4', '5'];
+    const data = labels.map(level => satisfactionCounts[level] || 0);
+    const backgroundColors = labels.map(level => getSatisfactionColor(level));
+
     return {
-      labels: Object.keys(satisfactionCounts),
+      labels: labels.map(level => `Zufriedenheit ${level}`),
       datasets: [{
-        label: 'Anzahl Antworten',
-        data: Object.values(satisfactionCounts),
-        backgroundColor: [
-          '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4'
-        ],
-        borderColor: [
-          '#dc2626', '#ea580c', '#ca8a04', '#16a34a', '#0891b2'
-        ],
+        data: data,
+        backgroundColor: backgroundColors,
+        borderColor: backgroundColors.map(color => color + '80'), // semi-transparent border
         borderWidth: 1
       }]
     };
