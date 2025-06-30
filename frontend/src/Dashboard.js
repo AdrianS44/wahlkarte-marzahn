@@ -206,6 +206,51 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
   const [showBoundaryEditor, setShowBoundaryEditor] = useState(false);
   const [showWahlkreisGrenzen, setShowWahlkreisGrenzen] = useState(true);
 
+  // UTM to WGS84 coordinate transformation
+  const convertedWahlkreisGeoJson = useMemo(() => {
+    if (!wahlkreisGeoJson || !wahlkreisGeoJson.features) return wahlkreisGeoJson;
+    
+    // Define UTM Zone 33N (EPSG:25833) to WGS84 (EPSG:4326)
+    const utm33n = '+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+    
+    const convertCoordinates = (coordinates) => {
+      if (Array.isArray(coordinates[0]) && Array.isArray(coordinates[0][0])) {
+        // Multi-dimensional array (polygon)
+        return coordinates.map(ring => 
+          ring.map(coord => {
+            const [x, y] = coord;
+            const [lon, lat] = proj4(utm33n, wgs84, [x, y]);
+            return [lon, lat];
+          })
+        );
+      } else {
+        // Simple coordinate array
+        const [x, y] = coordinates;
+        const [lon, lat] = proj4(utm33n, wgs84, [x, y]);
+        return [lon, lat];
+      }
+    };
+
+    const convertedGeoJson = {
+      ...wahlkreisGeoJson,
+      features: wahlkreisGeoJson.features.map(feature => ({
+        ...feature,
+        geometry: {
+          ...feature.geometry,
+          coordinates: convertCoordinates(feature.geometry.coordinates)
+        },
+        properties: {
+          ...feature.properties,
+          name: "Wahlkreis Marzahn-Hellersdorf 6",
+          description: "Echter Wahlkreis umfasst die Gebiete um U-Bahnhöfe Kaulsdorf-Nord, Wuhletal, Kienberg, Hellersdorf, Cottbusser Platz und das Siedlungsgebiet"
+        }
+      }))
+    };
+
+    return convertedGeoJson;
+  }, []);
+
   // Parse CSV data on component mount
   useEffect(() => {
     const result = Papa.parse(surveyData, {
