@@ -499,29 +499,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
     return values.filter(value => value !== 'N/A');
   };
 
-  const handleAdminLogin = (token) => {
-    setAdminToken(token);
-    setIsAdminMode(true);
-  };
-
-  const handleAdminLogout = () => {
-    localStorage.removeItem('adminToken');
-    setAdminToken(null);
-    setIsAdminMode(false);
-  };
-
-  // ALLE HOOKS SIND JETZT AUFGERUFEN - Jetzt können wir bedingte Returns verwenden
-
-  // Show admin interface if logged in
-  if (isAdminMode && adminToken) {
-    return <AdminDashboard token={adminToken} onLogout={handleAdminLogout} />;
-  }
-
-  // Show admin login if admin mode requested but not logged in
-  if (isAdminMode && !adminToken) {
-    return <AdminLogin onLogin={handleAdminLogin} />;
-  }
-
+  // Parse CSV data on component mount
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
