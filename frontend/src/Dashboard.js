@@ -1004,25 +1004,27 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 )}
                 
                 {Object.entries(locationStats).map(([location, stats]) => (
-                  <div key={location}>
-                    <Marker position={stats.coordinates}>
-                      <Popup>
-                        <div className="p-2">
-                          <h4 className="font-semibold text-sm mb-2">{location}</h4>
-                          <p className="text-xs">Teilnehmer: {stats.count}</p>
-                          <p className="text-xs">Ø Zufriedenheit: {stats.avgSatisfaction.toFixed(1)}/5</p>
-                          <p className="text-xs">Optimismus: {stats.optimisticPercent.toFixed(0)}%</p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                    <Circle
-                      center={stats.coordinates}
-                      radius={stats.avgSatisfaction * 200}
-                      color={getSatisfactionColor(Math.round(stats.avgSatisfaction).toString())}
-                      fillColor={getSatisfactionColor(Math.round(stats.avgSatisfaction).toString())}
-                      fillOpacity={0.3}
-                    />
-                  </div>
+                  <Marker 
+                    key={location}
+                    position={stats.coordinates}
+                    icon={new L.Icon({
+                      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                      iconSize: [25, 41],
+                      iconAnchor: [12, 41],
+                      popupAnchor: [1, -34],
+                      shadowSize: [41, 41]
+                    })}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <h4 className="font-semibold text-sm mb-2">{location}</h4>
+                        <p className="text-xs">Teilnehmer: {stats.count}</p>
+                        <p className="text-xs">Ø Zufriedenheit: {stats.avgSatisfaction.toFixed(1)}/5</p>
+                        <p className="text-xs">Optimismus: {stats.optimisticPercent.toFixed(0)}%</p>
+                      </div>
+                    </Popup>
+                  </Marker>
                 ))}
               </MapContainer>
             </div>
