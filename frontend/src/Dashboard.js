@@ -1082,58 +1082,37 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
                 {/* Zusätzliche Marker für custom addresses */}
                 {filteredData
                   .filter(response => response.custom_address && response.custom_address.trim())
-                  .map((response, index) => (
-                    <Marker 
-                      key={`custom-${index}`}
-                      position={[52.515, 13.585]} // Fallback-Position in Marzahn-Hellersdorf
-                      icon={new L.Icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                      })}
-                    >
-                      <Popup>
-                        <div className="p-2">
-                          <h4 className="font-semibold text-sm mb-2">Individueller Standort</h4>
-                          <p className="text-xs font-medium">📍 {response.custom_address}</p>
-                          <p className="text-xs">Zufriedenheit: {response['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'] || 'N/A'}/5</p>
-                          <p className="text-xs">Alter: {response['Q001. Wie alt sind Sie?'] || 'N/A'}</p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )
-                )}
-
-                {/* Zusätzliche Marker für custom addresses */}
-                {filteredData
-                  .filter(response => response.custom_address && response.custom_address.trim())
-                  .map((response, index) => (
-                    <Marker 
-                      key={`custom-${index}`}
-                      position={[52.515, 13.585]} // Fallback-Position in Marzahn-Hellersdorf
-                      icon={new L.Icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                      })}
-                    >
-                      <Popup>
-                        <div className="p-2">
-                          <h4 className="font-semibold text-sm mb-2">Individueller Standort</h4>
-                          <p className="text-xs font-medium">📍 {response.custom_address}</p>
-                          <p className="text-xs">Zufriedenheit: {response['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'] || 'N/A'}/5</p>
-                          <p className="text-xs">Alter: {response['Q001. Wie alt sind Sie?'] || 'N/A'}</p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )
-                )}
+                  .map((response, index) => {
+                    const coordinates = geocodedAddresses[response.custom_address] || [52.515, 13.585];
+                    
+                    return (
+                      <Marker 
+                        key={`custom-${index}`}
+                        position={coordinates}
+                        icon={new L.Icon({
+                          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                          iconSize: [25, 41],
+                          iconAnchor: [12, 41],
+                          popupAnchor: [1, -34],
+                          shadowSize: [41, 41]
+                        })}
+                      >
+                        <Popup>
+                          <div className="p-2">
+                            <h4 className="font-semibold text-sm mb-2">Individueller Standort</h4>
+                            <p className="text-xs font-medium">📍 {response.custom_address}</p>
+                            <p className="text-xs">Zufriedenheit: {response['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'] || 'N/A'}/5</p>
+                            <p className="text-xs">Alter: {response['Q001. Wie alt sind Sie?'] || 'N/A'}</p>
+                            {coordinates[0] !== 52.515 && (
+                              <p className="text-xs text-green-600">✓ Adresse geocodiert</p>
+                            )}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    );
+                  })
+                }
               </MapContainer>
             </div>
             <div className="mt-4 text-sm text-gray-600">
