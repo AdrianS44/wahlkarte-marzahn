@@ -80,6 +80,22 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingResponse 
