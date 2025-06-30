@@ -447,13 +447,35 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
                         value={formData.location}
                         onChange={(e) => setFormData({...formData, location: e.target.value})}
                         className="w-full p-2 border border-gray-300 rounded-md"
+                        required
                       >
                         <option value="">Bitte wählen</option>
                         {locations.map(location => (
                           <option key={location} value={location}>{location}</option>
                         ))}
+                        <option value="Andere Adresse">Andere Adresse</option>
                       </select>
                     </div>
+
+                    {/* Beliebige Adresse Eingabe */}
+                    {formData.location === 'Andere Adresse' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Spezifische Adresse/Standort
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.custom_address}
+                          onChange={(e) => setFormData({...formData, custom_address: e.target.value})}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          placeholder="z.B. Hauptstraße 123, 12627 Berlin oder Parkplatz Eastgate"
+                          required
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Für Bürgergespräche außerhalb der U-Bahn-Gebiete
+                        </p>
+                      </div>
+                    )}
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
