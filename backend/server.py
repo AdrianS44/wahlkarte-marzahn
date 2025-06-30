@@ -355,6 +355,110 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error getting stats: {str(e)}")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+class User(BaseModel):
+    username: str
+    password: str
+    role: str = "user"
+
+# Initialize default users on startup
+@app.on_event("startup")
+async def startup_event():
+    await initialize_default_users()
+
+# User management endpoints (admin only)
+async def require_admin(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user
+
+@app.get("/api/users")
+async def get_users(admin_user: dict = Depends(require_admin)):
+    """Get all users (admin only)"""
+    users = []
+    async for user in users_collection.find():
+        user["_id"] = str(user["_id"])
+        user.pop("password", None)  # Don't return password
+        users.append(user)
+    return users
+
+@app.post("/api/users")
+async def create_user(user: User, admin_user: dict = Depends(require_admin)):
+    """Create a new user (admin only)"""
+    # Check if user already exists
+    existing_user = await users_collection.find_one({"username": user.username})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    # Hash password and create user
+    hashed_password = get_password_hash(user.password)
+    new_user = {
+        "username": user.username,
+        "password": hashed_password,
+        "role": user.role,
+        "created_at": datetime.utcnow(),
+        "created_by": admin_user["username"]
+    }
+    
+    result = await users_collection.insert_one(new_user)
+    return {"id": str(result.inserted_id), "message": "User created successfully"}
+
+@app.put("/api/users/{user_id}")
+async def update_user(user_id: str, user: User, admin_user: dict = Depends(require_admin)):
+    """Update a user (admin only)"""
+    try:
+        # Check if new username already exists (if changed)
+        existing_user = await users_collection.find_one({"_id": ObjectId(user_id)})
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if existing_user["username"] != user.username:
+            username_exists = await users_collection.find_one({"username": user.username})
+            if username_exists:
+                raise HTTPException(status_code=400, detail="Username already exists")
+        
+        update_data = {
+            "username": user.username,
+            "role": user.role,
+            "updated_at": datetime.utcnow(),
+            "updated_by": admin_user["username"]
+        }
+        
+        # Only update password if provided
+        if user.password:
+            update_data["password"] = get_password_hash(user.password)
+        
+        result = await users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        return {"message": "User updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.delete("/api/users/{user_id}")
+async def delete_user(user_id: str, admin_user: dict = Depends(require_admin)):
+    """Delete a user (admin only)"""
+    try:
+        # Don't allow deleting the current admin user
+        user_to_delete = await users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user_to_delete:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        if user_to_delete["username"] == admin_user["username"]:
+            raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        
+        result = await users_collection.delete_one({"_id": ObjectId(user_id)})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        return {"message": "User deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
