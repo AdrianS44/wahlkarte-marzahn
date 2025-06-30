@@ -12,6 +12,7 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
   const [activeTab, setActiveTab] = useState('surveys');
   const [formData, setFormData] = useState({
     location: '',
+    custom_address: '',
     age_group: '',
     household_size: '',
     satisfaction: '',
