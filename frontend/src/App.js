@@ -189,7 +189,13 @@ function App() {
     location: '',
     ageGroup: '',
     mediaSource: '',
-    satisfaction: ''
+    satisfaction: '',
+    socialMediaPlatform: '',
+    informationSource: '',
+    householdSize: '',
+    futureOutlook: '',
+    politicalRepresentation: '',
+    kiezmacherKnown: ''
   });
   const [activeTab, setActiveTab] = useState('overview');
 
