@@ -228,12 +228,62 @@ function App() {
       const age = row['Q001. Wie alt sind Sie?'];
       const satisfaction = row['Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?'];
       const socialMedia = row['Q012[SQ001]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Soziale Medien]'];
+      const householdSize = row['Q002. Wie viele Personen leben (inkl. Ihnen) in Ihrem Haushalt?'];
+      const futureOutlook = row['Q005. Wie blicken Sie in die Zukunft Ihres Kiezes?'];
+      const politicalRep = row['Q007. Wie stark fühlen Sie sich im Bezirk politisch vertreten?'];
+      const kiezmacher = row['Q011. Haben Sie schon einmal etwas von den "Kiezmachern" gehört?'];
+      
+      // Social media platform filters
+      const facebook = row['Q013[SQ001]. Welche sozialen Medien nutzen Sie? [Facebook]'];
+      const instagram = row['Q013[SQ002]. Welche sozialen Medien nutzen Sie? [Instagram]'];
+      const tiktok = row['Q013[SQ003]. Welche sozialen Medien nutzen Sie? [TikTok]'];
+      const youtube = row['Q013[SQ004]. Welche sozialen Medien nutzen Sie? [YouTube]'];
+      const whatsapp = row['Q013[SQ005]. Welche sozialen Medien nutzen Sie? [WhatsApp]'];
+      const noSocialMedia = row['Q013[SQ006]. Welche sozialen Medien nutzen Sie? [keine]'];
+      
+      // Information source filters
+      const printMedia = row['Q012[SQ003]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Zeitung/Print-Medien]'];
+      const tv = row['Q012[SQ004]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Fernsehen/TV]'];
+      const newsletter = row['Q012[SQ006]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Newsletter]'];
+      const events = row['Q012[SQ007]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Informationsveranstaltung]'];
+      const noInfo = row['Q012[SQ008]. Wie informieren Sie sich über aktuelle Entwicklungen im Bezirk? [Gar nicht]'];
+      
+      // Apply all filters
+      let matchesSocialPlatform = true;
+      if (filters.socialMediaPlatform) {
+        switch (filters.socialMediaPlatform) {
+          case 'Facebook': matchesSocialPlatform = facebook === 'Ja'; break;
+          case 'Instagram': matchesSocialPlatform = instagram === 'Ja'; break;
+          case 'TikTok': matchesSocialPlatform = tiktok === 'Ja'; break;
+          case 'YouTube': matchesSocialPlatform = youtube === 'Ja'; break;
+          case 'WhatsApp': matchesSocialPlatform = whatsapp === 'Ja'; break;
+          case 'keine': matchesSocialPlatform = noSocialMedia === 'Ja'; break;
+        }
+      }
+      
+      let matchesInfoSource = true;
+      if (filters.informationSource) {
+        switch (filters.informationSource) {
+          case 'Soziale Medien': matchesInfoSource = socialMedia === 'Ja'; break;
+          case 'Print-Medien': matchesInfoSource = printMedia === 'Ja'; break;
+          case 'Fernsehen/TV': matchesInfoSource = tv === 'Ja'; break;
+          case 'Newsletter': matchesInfoSource = newsletter === 'Ja'; break;
+          case 'Informationsveranstaltung': matchesInfoSource = events === 'Ja'; break;
+          case 'Gar nicht': matchesInfoSource = noInfo === 'Ja'; break;
+        }
+      }
       
       return (
         (!filters.location || location === filters.location) &&
         (!filters.ageGroup || age === filters.ageGroup) &&
         (!filters.satisfaction || satisfaction === filters.satisfaction) &&
-        (!filters.mediaSource || socialMedia === filters.mediaSource)
+        (!filters.mediaSource || socialMedia === filters.mediaSource) &&
+        (!filters.householdSize || householdSize === filters.householdSize) &&
+        (!filters.futureOutlook || futureOutlook === filters.futureOutlook) &&
+        (!filters.politicalRepresentation || politicalRep === filters.politicalRepresentation) &&
+        (!filters.kiezmacherKnown || kiezmacher === filters.kiezmacherKnown) &&
+        matchesSocialPlatform &&
+        matchesInfoSource
       );
     });
   }, [parsedData, filters]);
