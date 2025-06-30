@@ -34,6 +34,12 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
     future_wishes: ''
   });
 
+  const [userFormData, setUserFormData] = useState({
+    username: '',
+    password: '',
+    role: 'user'
+  });
+
   const locations = [
     'Um den U-Bhf. Kaulsdorf-Nord herum',
     'Um den U-/S-Bhf. Wuhletal herum',
