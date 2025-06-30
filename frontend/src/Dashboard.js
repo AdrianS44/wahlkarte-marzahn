@@ -971,8 +971,11 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             <div className="mt-4 text-sm text-gray-600">
               <p><strong>Legende:</strong> Die Kreise zeigen die durchschnittliche Zufriedenheit pro Gebiet. Größere Kreise = höhere Zufriedenheit.</p>
               <p>Grün = hohe Zufriedenheit (&gt;3.5), Orange = mittlere Zufriedenheit (2.5-3.5), Rot = niedrige Zufriedenheit (&lt;2.5)</p>
+              {showWahlkreisGrenzen && (
+                <p><strong>Rote Umrandung:</strong> Wahlkreis Marzahn-Hellersdorf 6 Grenzen</p>
+              )}
               {wahlkreisGrenzen.length > 0 && (
-                <p className="text-red-600">Rote Linien zeigen die Wahlkreis-Grenzen.</p>
+                <p><strong>Grüne Umrandung:</strong> Manuell gezeichnete Grenzen</p>
               )}
             </div>
             
