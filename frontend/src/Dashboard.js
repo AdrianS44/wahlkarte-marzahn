@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { Filter, Map, BarChart3, Users, TrendingUp, MapPin, Home, Info, Settings, Edit, LogOut } from 'lucide-react';
 import Papa from 'papaparse';
-import wahlkreisGrenzen from './wahlkreis-grenzen.json';
+import wahlkreisGeoJson from './wahlkreis-grenzen.json';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
