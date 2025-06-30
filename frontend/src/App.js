@@ -560,28 +560,50 @@ function App() {
       {/* Navigation */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4">
-          <nav className="flex space-x-8">
-            {[
-              { id: 'overview', label: 'Übersicht', icon: Home },
-              { id: 'map', label: 'Karte', icon: Map },
-              { id: 'analysis', label: 'Analyse', icon: BarChart3 },
-            ].map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+          <nav className="flex justify-between items-center">
+            <div className="flex space-x-8">
+              {[
+                { id: 'overview', label: 'Übersicht', icon: Home },
+                { id: 'map', label: 'Karte', icon: Map },
+                { id: 'analysis', label: 'Analyse', icon: BarChart3 },
+              ].map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center space-x-2 py-4 px-2 border-b-2 transition-colors ${
+                      activeTab === tab.id
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowBoundaryEditor(!showBoundaryEditor)}
+                className="flex items-center space-x-2 py-2 px-3 text-sm bg-gray-100 hover:bg-gray-200 rounded-md"
+                title="Wahlkreis-Grenzen bearbeiten"
+              >
+                <Edit className="w-4 h-4" />
+                <span>Grenzen</span>
+              </button>
+              
+              <button
+                onClick={() => window.open('#', '_blank')}
+                className="flex items-center space-x-2 py-2 px-3 text-sm bg-blue-100 hover:bg-blue-200 rounded-md"
+                title="Admin-Bereich öffnen"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Admin</span>
+              </button>
+            </div>
           </nav>
         </div>
       </div>
