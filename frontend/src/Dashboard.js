@@ -670,7 +670,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
           {/* First Row of Filters */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Wohngebiet</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q00. In welchem Kiez wohnen Sie?</label>
               <select
                 value={filters.location}
                 onChange={(e) => setFilters({...filters, location: e.target.value})}
@@ -684,7 +684,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Altersgruppe</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q001. Wie alt sind Sie?</label>
               <select
                 value={filters.ageGroup}
                 onChange={(e) => setFilters({...filters, ageGroup: e.target.value})}
@@ -698,7 +698,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Zufriedenheit</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q003. Wie zufrieden sind Sie mit dem Leben in Ihrem Kiez?</label>
               <select
                 value={filters.satisfaction}
                 onChange={(e) => setFilters({...filters, satisfaction: e.target.value})}
@@ -712,7 +712,7 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Haushaltsgröße</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Q002. Wie viele Personen leben (inkl. Ihnen) in Ihrem Haushalt?</label>
               <select
                 value={filters.householdSize}
                 onChange={(e) => setFilters({...filters, householdSize: e.target.value})}
