@@ -708,7 +708,14 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
                   {surveyResponses.map((response) => (
                     <tr key={response._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {response.location || '-'}
+                        <div>
+                          <div>{response.location || '-'}</div>
+                          {response.custom_address && (
+                            <div className="text-xs text-gray-500 italic">
+                              📍 {response.custom_address}
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {response.age_group || '-'}
