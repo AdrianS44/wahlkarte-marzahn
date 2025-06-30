@@ -251,6 +251,56 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
     return convertedGeoJson;
   }, []);
 
+  // Geocoding function für custom addresses
+  const geocodeAddress = async (address) => {
+    try {
+      // Verwende Nominatim (OpenStreetMap) für kostenloses Geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Berlin, Deutschland')}&limit=1`
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      }
+      
+      // Fallback für Marzahn-Hellersdorf falls Geocoding fehlschlägt
+      return [52.515, 13.585];
+    } catch (error) {
+      console.error('Geocoding fehler:', error);
+      return [52.515, 13.585];
+    }
+  };
+
+  // Cache für geocodierte Adressen
+  const [geocodedAddresses, setGeocodedAddresses] = useState({});
+
+  // Geocoding für custom addresses
+  useEffect(() => {
+    const geocodeCustomAddresses = async () => {
+      const customResponses = filteredData.filter(response => 
+        response.custom_address && 
+        response.custom_address.trim() && 
+        !geocodedAddresses[response.custom_address]
+      );
+
+      for (const response of customResponses) {
+        const coordinates = await geocodeAddress(response.custom_address);
+        setGeocodedAddresses(prev => ({
+          ...prev,
+          [response.custom_address]: coordinates
+        }));
+        
+        // Kleine Pause zwischen Requests um Rate Limits zu vermeiden
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    };
+
+    if (filteredData.length > 0) {
+      geocodeCustomAddresses();
+    }
+  }, [filteredData]);
+
   // Consistent color scheme for satisfaction levels (gradient from red to green)
   const satisfactionColors = {
     '1': '#dc2626', // rot (sehr unzufrieden)
