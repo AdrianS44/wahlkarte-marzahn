@@ -253,15 +253,32 @@ function App({ userToken, userRole, onLogout, onAdminMode }) {
 
   // Geocoding function für custom addresses
   const geocodeAddress = async (address) => {
+    if (!address || address.trim() === '') return [52.515, 13.585];
+    
     try {
       // Verwende Nominatim (OpenStreetMap) für kostenloses Geocoding
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Berlin, Deutschland')}&limit=1`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Berlin, Deutschland')}&limit=1`,
+        {
+          headers: {
+            'User-Agent': 'Survey Dashboard App'
+          }
+        }
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       if (data && data.length > 0) {
-        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        
+        if (!isNaN(lat) && !isNaN(lon)) {
+          return [lat, lon];
+        }
       }
       
       // Fallback für Marzahn-Hellersdorf falls Geocoding fehlschlägt
