@@ -368,35 +368,55 @@ const AdminDashboard = ({ token, onLogout, userRole }) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Action Buttons */}
-        <div className="mb-6 flex flex-wrap gap-4">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Neue Antwort hinzufügen</span>
-          </button>
-          
-          <label className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
-            <Upload className="w-4 h-4" />
-            <span>CSV Importieren</span>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleCSVImport}
-              className="hidden"
-            />
-          </label>
-          
-          <button
-            onClick={handleCSVExport}
-            className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-          >
-            <Download className="w-4 h-4" />
-            <span>CSV Exportieren</span>
-          </button>
-        </div>
+        {/* Survey Management Tab */}
+        {activeTab === 'surveys' && (
+          <>
+            {/* Action Buttons */}
+            <div className="mb-6 flex flex-wrap gap-4">
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Neue Antwort hinzufügen</span>
+              </button>
+              
+              <label className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
+                <Upload className="w-4 h-4" />
+                <span>CSV Importieren</span>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleCSVImport}
+                  className="hidden"
+                />
+              </label>
+              
+              <button
+                onClick={handleCSVExport}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              >
+                <Download className="w-4 h-4" />
+                <span>CSV Exportieren</span>
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* User Management Tab */}
+        {activeTab === 'users' && userRole === 'admin' && (
+          <>
+            <div className="mb-6 flex flex-wrap gap-4">
+              <button
+                onClick={() => setShowUserForm(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Neuen Benutzer hinzufügen</span>
+              </button>
+            </div>
+          </>
+        )}
 
         {/* Add/Edit Form Modal */}
         {showAddForm && (
