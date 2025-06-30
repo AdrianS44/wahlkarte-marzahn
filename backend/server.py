@@ -192,13 +192,13 @@ async def create_survey_response(
 async def update_survey_response(
     response_id: str,
     response: SurveyResponse,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Update a survey response"""
     try:
         response_dict = response.dict()
         response_dict["updated_at"] = datetime.utcnow()
-        response_dict["updated_by"] = current_user
+        response_dict["updated_by"] = current_user["username"]
         
         result = await collection.update_one(
             {"_id": ObjectId(response_id)},
