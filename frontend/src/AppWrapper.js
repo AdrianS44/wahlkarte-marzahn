@@ -8,7 +8,7 @@ function AppWrapper() {
   const [userToken, setUserToken] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [skipLogin, setSkipLogin] = useState(true); // ENTWICKLUNGSMODUS: Login überspringen
+  const [skipLogin, setSkipLogin] = useState(false); // Login wieder aktiviert
 
   useEffect(() => {
     // Im Entwicklungsmodus: Automatisch als "Gast" anmelden
