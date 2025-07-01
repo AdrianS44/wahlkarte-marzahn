@@ -162,6 +162,11 @@ def read_root():
 def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
 
+@app.post("/api/auth", response_model=Token)
+async def login_alternative(login_request: LoginRequest):
+    """Alternative login endpoint to bypass cache issues"""
+    return await login(login_request)
+
 @app.post("/api/login", response_model=Token)
 async def login(login_request: LoginRequest):
     username = login_request.username
