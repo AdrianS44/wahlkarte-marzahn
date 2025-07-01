@@ -15,10 +15,13 @@ const UserLogin = ({ onLogin }) => {
     setIsLoading(true);
     setError('');
 
+    const loginUrl = `${process.env.REACT_APP_BACKEND_URL}/api/login`;
+    console.log('🔍 Attempting login to:', loginUrl);
+    console.log('🔍 REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
+    console.log('🔍 Credentials:', { username: credentials.username, password: '***' });
+
     try {
-      console.log('Attempting login to:', `${process.env.REACT_APP_BACKEND_URL}/api/login`);
-      
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
+      const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,22 +29,40 @@ const UserLogin = ({ onLogin }) => {
         body: JSON.stringify(credentials),
       });
 
-      console.log('Login response status:', response.status);
+      console.log('📡 Response received:');
+      console.log('  - Status:', response.status);
+      console.log('  - Status Text:', response.statusText);
+      console.log('  - OK:', response.ok);
+      console.log('  - Headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful, role:', data.role);
+        console.log('✅ Login successful!');
+        console.log('  - Role:', data.role);
+        console.log('  - Token length:', data.access_token?.length);
+        
         localStorage.setItem('userToken', data.access_token);
         localStorage.setItem('userRole', data.role);
         onLogin(data.access_token, data.role);
       } else {
-        const errorData = await response.json();
-        console.error('Login failed:', errorData);
-        setError(errorData.detail || 'Login fehlgeschlagen');
+        console.log('❌ Login failed!');
+        const errorText = await response.text();
+        console.log('  - Error response:', errorText);
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          setError(errorData.detail || 'Login fehlgeschlagen');
+        } catch {
+          setError(`HTTP ${response.status}: ${response.statusText}`);
+        }
       }
     } catch (err) {
-      console.error('Network error during login:', err);
-      setError(`Verbindungsfehler: ${err.message}. Bitte versuchen Sie es später erneut.`);
+      console.log('🚨 Network/Connection error:');
+      console.log('  - Error type:', err.name);
+      console.log('  - Error message:', err.message);
+      console.log('  - Full error:', err);
+      
+      setError(`Netzwerkfehler: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
