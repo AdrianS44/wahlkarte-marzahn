@@ -8,15 +8,23 @@ function AppWrapper() {
   const [userToken, setUserToken] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [skipLogin, setSkipLogin] = useState(true); // ENTWICKLUNGSMODUS: Login überspringen
 
   useEffect(() => {
+    // Im Entwicklungsmodus: Automatisch als "Gast" anmelden
+    if (skipLogin) {
+      setUserToken('guest-token');
+      setUserRole('guest');
+      return;
+    }
+
     const token = localStorage.getItem('userToken');
     const role = localStorage.getItem('userRole');
     if (token && role) {
       setUserToken(token);
       setUserRole(role);
     }
-  }, []);
+  }, [skipLogin]);
 
   const handleLogin = (token, role) => {
     setUserToken(token);
@@ -24,6 +32,14 @@ function AppWrapper() {
   };
 
   const handleLogout = () => {
+    if (skipLogin) {
+      // Im Entwicklungsmodus: Zurück zu Gast-Modus
+      setUserToken('guest-token');
+      setUserRole('guest');
+      setIsAdminMode(false);
+      return;
+    }
+    
     localStorage.removeItem('userToken');
     localStorage.removeItem('userRole');
     setUserToken(null);
@@ -31,13 +47,13 @@ function AppWrapper() {
     setIsAdminMode(false);
   };
 
-  // Show login if no token
-  if (!userToken) {
+  // Show login only if NOT in skip mode and no token
+  if (!skipLogin && !userToken) {
     return <UserLogin onLogin={handleLogin} />;
   }
 
-  // Show admin dashboard if in admin mode
-  if (isAdminMode) {
+  // Show admin dashboard if in admin mode (disabled in guest mode)
+  if (isAdminMode && userRole !== 'guest') {
     return (
       <AdminDashboard 
         token={userToken} 
@@ -48,13 +64,20 @@ function AppWrapper() {
     );
   }
 
-  // Show main dashboard with admin button if user is admin
+  // Show main dashboard
   return (
     <App 
       userToken={userToken}
       userRole={userRole}
       onLogout={handleLogout}
-      onAdminMode={() => setIsAdminMode(true)}
+      onAdminMode={() => {
+        if (userRole === 'guest') {
+          alert('🔧 Entwicklungsmodus: Admin-Funktionen sind deaktiviert. Das System läuft im Gastmodus, da das Backend extern nicht erreichbar ist.');
+          return;
+        }
+        setIsAdminMode(true);
+      }}
+      developmentMode={skipLogin}
     />
   );
 }
