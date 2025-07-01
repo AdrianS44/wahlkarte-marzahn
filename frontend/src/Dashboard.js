@@ -1005,6 +1005,24 @@ function App({ userToken, userRole, onLogout, onAdminMode, developmentMode }) {
         </div>
 
         {/* Content based on active tab */}
+        {/* Development Mode Banner */}
+        {developmentMode && (
+          <div className="bg-orange-100 border-l-4 border-orange-500 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <span className="text-orange-500">🔧</span>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-orange-700">
+                  <strong>Entwicklungsmodus:</strong> Das System läuft im Gastmodus. 
+                  Alle Visualisierungen und Filter funktionieren normal mit den 130 Umfrage-Antworten. 
+                  Admin-Funktionen sind temporär deaktiviert.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Key Statistics */}
