@@ -156,7 +156,11 @@ async def require_admin(current_user: dict = Depends(get_current_user)):
 
 @app.get("/")
 def read_root():
-    return {"message": "Survey Dashboard API"}
+    return {"message": "Survey Dashboard API", "status": "running", "timestamp": datetime.utcnow().isoformat()}
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
 
 @app.post("/api/login", response_model=Token)
 async def login(login_request: LoginRequest):
