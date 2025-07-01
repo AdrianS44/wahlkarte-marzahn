@@ -324,10 +324,18 @@ function App({ userToken, userRole, onLogout, onAdminMode, developmentMode }) {
           row['Q00. In welchem Kiez wohnen Sie?'] !== 'N/A'
         );
         
-        console.log('CSV data loaded:', validCsvData.length, 'responses');
+        console.log('📊 CSV data loaded:', validCsvData.length, 'responses');
         
-        // If user is logged in, also load API data and combine
-        if (userToken) {
+        // In development mode, only use CSV data (no API calls)
+        if (developmentMode || userRole === 'guest') {
+          console.log('🔧 Development mode: Using only CSV data');
+          setParsedData(validCsvData);
+          setIsLoadingData(false);
+          return;
+        }
+        
+        // If user is logged in and NOT guest, also load API data and combine
+        if (userToken && userToken !== 'guest-token') {
           try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/survey-responses`, {
               headers: {
@@ -337,7 +345,7 @@ function App({ userToken, userRole, onLogout, onAdminMode, developmentMode }) {
             
             if (response.ok) {
               const apiData = await response.json();
-              console.log('API data loaded:', apiData.length, 'additional responses');
+              console.log('🔄 API data loaded:', apiData.length, 'additional responses');
               
               // Transform API data to match CSV structure
               const transformedApiData = apiData.map(item => ({
@@ -374,25 +382,25 @@ function App({ userToken, userRole, onLogout, onAdminMode, developmentMode }) {
               
               // Combine CSV and API data
               const combinedData = [...validCsvData, ...transformedApiData];
-              console.log('Total combined data:', combinedData.length, 'responses');
-              console.log('Custom addresses found:', transformedApiData.filter(d => d.custom_address).length);
+              console.log('📈 Total combined data:', combinedData.length, 'responses');
+              console.log('📍 Custom addresses found:', transformedApiData.filter(d => d.custom_address).length);
               
               setParsedData(combinedData);
             } else {
-              console.error('Failed to load API data:', response.status);
+              console.error('❌ Failed to load API data:', response.status);
               setParsedData(validCsvData);
             }
           } catch (apiError) {
-            console.error('Error loading API data:', apiError);
+            console.error('❌ Error loading API data:', apiError);
             setParsedData(validCsvData);
           }
         } else {
-          // No token, use only CSV data
+          // No valid token, use only CSV data
           setParsedData(validCsvData);
         }
         
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('❌ Error loading data:', error);
         setParsedData([]);
       } finally {
         setIsLoadingData(false);
@@ -400,7 +408,7 @@ function App({ userToken, userRole, onLogout, onAdminMode, developmentMode }) {
     };
 
     loadCombinedData();
-  }, [userToken]);
+  }, [userToken, developmentMode, userRole]);
 
   // Filter data based on selected filters
   const filteredData = useMemo(() => {
