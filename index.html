@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wahlkarte Marzahn-Hellersdorf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; }
+    #map { height: 100vh; }
+
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 50px;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .legend {
+      background: white;
+      padding: 8px 12px;
+      font-size: 14px;
+      line-height: 1.5em;
+      color: #333;
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 0.85;
+    }
+
+    #loginBox {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -25%);
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px #999;
+      border-radius: 8px;
+      text-align: center;
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+  <div id="loginBox">
+    <h3>Login</h3>
+    <input type="text" id="username" placeholder="Benutzername"><br>
+    <input type="password" id="password" placeholder="Passwort"><br>
+    <button onclick="checkLogin()">Login</button>
+    <p id="loginError" style="color: red;"></p>
+  </div>
+
+  <div id="appContent" style="display: none;">
+    <div id="controls">
+      <label for="parteiSelect">Partei wählen:</label>
+      <select id="parteiSelect">
+        <option value="SPD_%">SPD</option>
+        <option value="GRÜNE_%">Grüne</option>
+        <option value="CDU_%" selected>CDU</option>
+        <option value="Die Linke_%">Die Linke</option>
+        <option value="AfD_%">AfD</option>
+        <option value="FDP_%">FDP</option>
+        <option value="BSW_%">BSW</option>
+      </select>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const BENUTZERNAME = "demo";
+    const PASSWORT = "12345";
+
+    function checkLogin() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      if (user === BENUTZERNAME && pass === PASSWORT) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("appContent").style.display = "block";
+        loadData();
+      } else {
+        document.getElementById("loginError").textContent = "Falscher Login!";
+      }
+    }
+
+    const map = L.map("map").setView([52.54, 13.6], 12);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+
+    let partei = "CDU_%";
+    const parteiSelect = document.getElementById("parteiSelect");
+    parteiSelect.addEventListener("change", () => {
+      partei = parteiSelect.value;
+      updateChoropleth();
+      updateLegend();
+    });
+
+    let geoLayer;
+    let daten;
+
+    const parteiFarben = {
+      "SPD_%": {
+        steps: [45, 40, 35, 30, 25, 20, 15, 10, 5, 0],
+        colors: ["#67000d", "#880611", "#a50f15", "#bd1c1c", "#cb181d", "#de2d26", "#ef3b2c", "#fb6a4a", "#fcae91", "#fee5d9"]
+      },
+      "CDU_%": {
+        steps: [45, 40, 35, 30, 25, 20, 15, 10, 5, 0],
+        colors: ["#000000", "#1a1a1a", "#333333", "#4d4d4d", "#666666", "#808080", "#999999", "#b3b3b3", "#cccccc", "#eeeeee"]
+      },
+      "GRÜNE_%": {
+        steps: [30, 25, 20, 15, 10, 7, 4, 2, 1, 0],
+        colors: ["#00441b", "#006d2c", "#238b45", "#41ae76", "#66c2a4", "#99d8c9", "#ccece6", "#e0f3db", "#f7fcf5", "#ffffff"]
+      },
+      "Die Linke_%": {
+        steps: [45, 40, 35, 30, 25, 20, 15, 10, 5, 0],
+        colors: ["#8b005f", "#a80074", "#c80089", "#e0009e", "#ec44a9", "#f063b7", "#f49dcb", "#f8c4df", "#fde4ef", "#fff7fb"]
+      },
+      "AfD_%": {
+        steps: [45, 40, 35, 30, 25, 20, 15, 10, 5, 0],
+        colors: ["#08306b", "#084594", "#2171b5", "#4292c6", "#6baed6", "#9ecae1", "#c6dbef", "#deebf7", "#f7fbff", "#ffffff"]
+      },
+      "FDP_%": {
+        steps: [20, 15, 10, 7, 5, 3, 2, 1, 0.5, 0],
+        colors: ["#b58900", "#d4af00", "#e0c200", "#eccf00", "#f6dc45", "#ffe066", "#fff2a8", "#fffbd9", "#ffffef", "#ffffff"]
+      },
+      "BSW_%": {
+        steps: [30, 20, 15, 10, 7, 5, 3, 1.5, 0.5, 0],
+        colors: ["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#dadaeb", "#efedf5", "#f7f4fb", "#ffffff"]
+      }
+    };
+
+    function getParteiColorFunc(partei) {
+      const scale = parteiFarben[partei];
+      return p => {
+        for (let i = 0; i < scale.steps.length; i++) {
+          if (p > scale.steps[i]) return scale.colors[i];
+        }
+        return scale.colors[scale.colors.length - 1];
+      };
+    }
+
+    async function loadData() {
+      const [geoRes, dataRes] = await Promise.all([
+        fetch("GEO_Daten_MarzahnHellersdorf_WGS84.json"),
+        fetch("ergebnisse_marzahn_hellersdorf_clean.json")
+      ]);
+      const geojson = await geoRes.json();
+      daten = await dataRes.json();
+
+      geoLayer = L.geoJSON(geojson, {
+        style: feature => {
+          const id = feature.properties.UWB.toString().trim();
+          const bezirk = daten[id];
+          const wert = bezirk && bezirk[partei] !== undefined ? bezirk[partei] : 0;
+          return {
+            fillColor: getParteiColorFunc(partei)(wert),
+            weight: 1.5,
+            color: "#444",
+            opacity: 1,
+            fillOpacity: 0.85
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          const id = feature.properties.UWB.toString().trim();
+          const bezirk = daten[id];
+          if (bezirk) {
+            const parteiwert = bezirk[partei] ?? 0;
+            const cdu = bezirk["CDU_%"] ?? 0;
+            const potenzial = bezirk["CDU-Potential_%"] ?? 0;
+            const differenz = (cdu - potenzial).toFixed(1);
+            const wahlbeteiligung = bezirk["Wahlbeteiligung_%"] ?? 0;
+
+            layer.bindPopup(`
+              <b>Wahlbezirk:</b> ${id}<br>
+              <b>${partei.replace("_%", "")}:</b> ${parteiwert.toFixed(1)} %<br>
+              <b>CDU-Potential:</b> ${potenzial.toFixed(1)} %<br>
+              <b>Diff (CDU Ergebnis – Potential):</b> ${differenz > 0 ? '+' : ''}${differenz} %<br>
+              <b>Wahlbeteiligung:</b> ${wahlbeteiligung.toFixed(1)} %
+            `);
+          }
+        }
+      }).addTo(map);
+
+      updateLegend();
+    }
+
+    function updateChoropleth() {
+      const colorFunc = getParteiColorFunc(partei);
+      geoLayer.eachLayer(layer => {
+        const id = layer.feature.properties.UWB.toString().trim();
+        const bezirk = daten[id];
+        const wert = bezirk && bezirk[partei] !== undefined ? bezirk[partei] : 0;
+        layer.setStyle({
+          fillColor: colorFunc(wert),
+          weight: 1.5,
+          color: "#444"
+        });
+
+        if (bezirk) {
+          const parteiwert = bezirk[partei] ?? 0;
+          const cdu = bezirk["CDU_%"] ?? 0;
+          const potenzial = bezirk["CDU-Potential_%"] ?? 0;
+          const differenz = (cdu - potenzial).toFixed(1);
+          const wahlbeteiligung = bezirk["Wahlbeteiligung_%"] ?? 0;
+
+          layer.setPopupContent(`
+            <b>Wahlbezirk:</b> ${id}<br>
+            <b>${partei.replace("_%", "")}:</b> ${parteiwert.toFixed(1)} %<br>
+            <b>CDU-Potential:</b> ${potenzial.toFixed(1)} %<br>
+            <b>Diff (CDU Ergebnis – Potential):</b> ${differenz > 0 ? '+' : ''}${differenz} %<br>
+            <b>Wahlbeteiligung:</b> ${wahlbeteiligung.toFixed(1)} %
+          `);
+        }
+      });
+
+      updateLegend();
+    }
+
+    const legend = L.control({ position: "bottomright" });
+    legend.onAdd = function () {
+      const div = L.DomUtil.create("div", "legend");
+      div.innerHTML = "<strong>Prozentanteil</strong><br>";
+      return div;
+    };
+    legend.addTo(map);
+
+    function updateLegend() {
+      const div = document.querySelector(".legend");
+      const scale = parteiFarben[partei];
+      let html = "<strong>Prozentanteil</strong><br>";
+      for (let i = 0; i < scale.steps.length - 1; i++) {
+        const from = scale.steps[i + 1];
+        const to = scale.steps[i];
+        const color = scale.colors[i];
+        html += `<i style="background:${color}"></i> ${from}–${to} %<br>`;
+      }
+      div.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
